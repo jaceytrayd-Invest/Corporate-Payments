@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Payments Domain Masterclass | Ask Jacey</title>
+<style>
+  :root {
+    --navy: #0a0f1e;
+    --navy-light: #111827;
+    --navy-card: #141d33;
+    --navy-card2: #0f1829;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-muted: #8a6e2f;
+    --text: #e8eaf0;
+    --text-muted: #8a9bbf;
+    --text-body: #bcc6dc;
+    --accent: #1e3a5f;
+    --accent2: #163050;
+    --border: rgba(201,168,76,0.15);
+    --border-subtle: rgba(255,255,255,0.05);
+    --sidebar-w: 290px;
+    --radius: 12px;
+    /* Bloom's Taxonomy Colors */
+    --bloom-remember: #6c757d;
+    --bloom-understand: #0ea5e9;
+    --bloom-apply: #22c55e;
+    --bloom-analyze: #f97316;
+    --bloom-evaluate: #ef4444;
+    --bloom-create: #a855f7;
+    /* ADDIE Colors */
+    --addie-a: #3b82f6;
+    --addie-d: #8b5cf6;
+    --addie-dev: #22c55e;
+    --addie-i: #f97316;
+    --addie-e: #c9a84c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    display: flex;
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  /* PROGRESS */
+  #progress-bar { position: fixed; top: 0; left: 0; height: 3px; width: 0%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); z-index: 1000; transition: width 0.08s; }
+
+  /* SIDEBAR */
+  #sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh; background: var(--navy-light); border-right: 1px solid var(--border); overflow-y: auto; z-index: 100; display: flex; flex-direction: column; transition: transform 0.3s; }
+  #sidebar::-webkit-scrollbar { width: 3px; }
+  #sidebar::-webkit-scrollbar-thumb { background: var(--gold-muted); border-radius: 3px; }
+  .sidebar-brand { padding: 24px 22px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0; background: linear-gradient(135deg, rgba(201,168,76,0.06), transparent); }
+  .sidebar-brand .label { font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+  .sidebar-brand h2 { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.4; }
+  .nav-section { padding: 10px 8px; }
+  .nav-section-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); padding: 0 12px; margin: 14px 0 5px; display: flex; align-items: center; gap: 8px; }
+  .nav-section-label::after { content: ''; flex: 1; height: 1px; background: var(--border-subtle); }
+  .nav-item { display: flex; align-items: center; gap: 9px; padding: 6px 12px; border-radius: 7px; cursor: pointer; font-size: 11.5px; color: var(--text-muted); transition: all 0.18s; text-decoration: none; margin-bottom: 1px; position: relative; }
+  .nav-item:hover { background: var(--accent2); color: var(--text); }
+  .nav-item.active { background: rgba(201,168,76,0.1); color: var(--gold); }
+  .nav-item.active::before { content: ''; position: absolute; left: 0; top: 20%; bottom: 20%; width: 3px; background: var(--gold); border-radius: 0 3px 3px 0; }
+  .nav-num { font-size: 9px; font-weight: 700; min-width: 20px; height: 20px; background: var(--accent); border-radius: 5px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); flex-shrink: 0; }
+  .nav-item.active .nav-num { background: rgba(201,168,76,0.2); color: var(--gold); }
+  .sidebar-footer { padding: 14px 22px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-muted); flex-shrink: 0; }
+  .sidebar-footer a { color: var(--gold); text-decoration: none; }
+
+  /* MAIN */
+  #main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; }
+
+  /* HERO */
+  #hero { background: linear-gradient(135deg, #0a1628 0%, #0d1f3c 50%, #0a0f1e 100%); padding: 72px 72px 60px; position: relative; overflow: hidden; border-bottom: 1px solid var(--border); }
+  #hero::before { content: ''; position: absolute; top: -100px; right: -100px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%); pointer-events: none; }
+  .hero-eyebrow { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+  .hero-eyebrow::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--gold); }
+  #hero h1 { font-size: clamp(28px, 3.5vw, 48px); font-weight: 800; line-height: 1.1; color: #fff; margin-bottom: 14px; letter-spacing: -1px; }
+  #hero h1 span { color: var(--gold); }
+  .hero-sub { font-size: 15px; color: var(--text-muted); max-width: 600px; margin-bottom: 8px; line-height: 1.7; }
+  .hero-methodology { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 32px; }
+  .method-tag { padding: 5px 14px; border-radius: 100px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; border: 1px solid; }
+  .method-tag.addie { background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.3); color: #60a5fa; }
+  .method-tag.bloom { background: rgba(168,85,247,0.12); border-color: rgba(168,85,247,0.3); color: #c084fc; }
+  .method-tag.kirk { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.3); color: #4ade80; }
+  .method-tag.kolb { background: rgba(249,115,22,0.12); border-color: rgba(249,115,22,0.3); color: #fb923c; }
+  .method-tag.model { background: rgba(201,168,76,0.12); border-color: rgba(201,168,76,0.3); color: var(--gold-light); }
+  .hero-stats { display: flex; gap: 20px; flex-wrap: wrap; }
+  .stat { text-align: center; padding: 14px 20px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: var(--radius); min-width: 84px; }
+  .stat-num { font-size: 24px; font-weight: 800; color: var(--gold); line-height: 1; margin-bottom: 3px; }
+  .stat-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* CONTENT */
+  #content { padding: 48px 64px 96px; max-width: 980px; }
+
+  /* TYPOGRAPHY */
+  .module-body p { color: var(--text-body); margin-bottom: 14px; }
+  .module-body p:last-child { margin-bottom: 0; }
+  .module-body strong { color: var(--text); }
+  .module-body h3 { font-size: 11px; font-weight: 700; color: var(--gold-light); text-transform: uppercase; letter-spacing: 1.5px; margin: 26px 0 11px; padding-bottom: 7px; border-bottom: 1px solid var(--border); }
+  .module-body h3:first-child { margin-top: 0; }
+  .module-body h4 { font-size: 14px; font-weight: 700; color: var(--text); margin: 16px 0 8px; }
+  .module-body ul, .module-body ol { padding-left: 0; list-style: none; margin-bottom: 12px; }
+  .module-body ul li, .module-body ol li { color: var(--text-body); padding: 4px 0 4px 22px; position: relative; }
+  .module-body ul li::before { content: '→'; position: absolute; left: 0; color: var(--gold-muted); font-size: 12px; }
+  .module-body ol { counter-reset: list; }
+  .module-body ol li { counter-increment: list; }
+  .module-body ol li::before { content: counter(list); position: absolute; left: 0; color: var(--gold); font-size: 10px; font-weight: 800; width: 17px; height: 17px; background: rgba(201,168,76,0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; top: 7px; }
+
+  /* TABLES */
+  .table-wrap { overflow-x: auto; margin: 14px 0; border-radius: 8px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: rgba(201,168,76,0.07); border-bottom: 1px solid rgba(201,168,76,0.18); }
+  th { padding: 11px 14px; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); }
+  td { padding: 10px 14px; color: var(--text-body); border-bottom: 1px solid var(--border-subtle); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+  /* MODULE CARD */
+  .module { margin-bottom: 60px; scroll-margin-top: 20px; }
+  .module-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+  .module-num-badge { flex-shrink: 0; width: 48px; height: 48px; background: linear-gradient(135deg, var(--gold), var(--gold-muted)); border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #0a0f1e; margin-top: 2px; }
+  .module-title-group { flex: 1; }
+  .module-tag-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+  .module-tag { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-muted); }
+  .module h2 { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.3; }
+  .module-body { background: var(--navy-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px 34px; position: relative; overflow: hidden; }
+  .module-body::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(180deg, var(--gold), transparent); border-radius: 4px 0 0 4px; }
+
+  /* BLOOM'S BADGE */
+  .bloom-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; border: 1px solid; flex-shrink: 0; }
+  .bloom-remember { background: rgba(108,117,125,0.15); border-color: rgba(108,117,125,0.3); color: #9ca3af; }
+  .bloom-understand { background: rgba(14,165,233,0.12); border-color: rgba(14,165,233,0.3); color: #38bdf8; }
+  .bloom-apply { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.3); color: #4ade80; }
+  .bloom-analyze { background: rgba(249,115,22,0.12); border-color: rgba(249,115,22,0.3); color: #fb923c; }
+  .bloom-evaluate { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.3); color: #f87171; }
+  .bloom-create { background: rgba(168,85,247,0.12); border-color: rgba(168,85,247,0.3); color: #c084fc; }
+
+  /* LEARNING OBJECTIVES */
+  .learning-objectives { background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.2); border-radius: 10px; padding: 16px 20px; margin-bottom: 24px; }
+  .lo-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #60a5fa; margin-bottom: 10px; display: flex; align-items: center; gap: 7px; }
+  .lo-label::before { content: '🎯'; font-size: 13px; }
+  .lo-list { list-style: none; padding: 0; margin: 0; }
+  .lo-list li { color: var(--text-body); font-size: 13.5px; padding: 4px 0 4px 20px; position: relative; }
+  .lo-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; opacity: 0.6; flex-shrink: 0; }
+  .bloom-verb { font-weight: 700; color: #60a5fa; }
+
+  /* CALLOUT BOXES */
+  .insight-box, .warning-box, .example-box, .remember-box, .definition-box, .apply-box, .reflect-box {
+    border-radius: 10px; padding: 15px 18px; margin: 16px 0; display: flex; gap: 13px; align-items: flex-start;
+  }
+  .insight-box { background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.2); }
+  .warning-box { background: rgba(231,76,60,0.06); border: 1px solid rgba(231,76,60,0.2); }
+  .example-box { background: rgba(52,152,219,0.06); border: 1px solid rgba(52,152,219,0.2); }
+  .remember-box { background: rgba(46,204,113,0.06); border: 1px solid rgba(46,204,113,0.2); }
+  .definition-box { background: rgba(155,89,182,0.06); border: 1px solid rgba(155,89,182,0.2); }
+  .apply-box { background: rgba(34,197,94,0.05); border: 1px solid rgba(34,197,94,0.2); }
+  .reflect-box { background: rgba(249,115,22,0.05); border: 1px solid rgba(249,115,22,0.2); }
+  .box-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+  .box-content { flex: 1; }
+  .box-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
+  .insight-box .box-label { color: var(--gold); }
+  .warning-box .box-label { color: #e74c3c; }
+  .example-box .box-label { color: #3498db; }
+  .remember-box .box-label { color: #2ecc71; }
+  .definition-box .box-label { color: #9b59b6; }
+  .apply-box .box-label { color: #22c55e; }
+  .reflect-box .box-label { color: #f97316; }
+  .box-content p { color: var(--text-body) !important; margin: 0 !important; font-size: 13.5px; }
+  .box-content strong { color: var(--text) !important; }
+
+  /* APPLICATION ACTIVITY */
+  .apply-activity { background: rgba(34,197,94,0.04); border: 1px solid rgba(34,197,94,0.15); border-radius: 10px; padding: 18px 20px; margin-top: 20px; }
+  .apply-activity-header { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #4ade80; margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+  .apply-q { background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 7px; padding: 12px 16px; margin-bottom: 8px; }
+  .apply-q-level { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
+  .apply-q p { color: var(--text-body); font-size: 13.5px; margin: 0; }
+
+  /* 70:20:10 BOX */
+  .learning-transfer { background: rgba(249,115,22,0.04); border: 1px solid rgba(249,115,22,0.18); border-radius: 10px; padding: 16px 20px; margin-top: 16px; }
+  .lt-header { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #fb923c; margin-bottom: 12px; }
+  .lt-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .lt-item { text-align: center; background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px 10px; }
+  .lt-pct { font-size: 20px; font-weight: 800; color: #fb923c; line-height: 1; margin-bottom: 3px; }
+  .lt-type { font-size: 10px; font-weight: 700; color: var(--text); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+  .lt-desc { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+
+  /* MODULE SUMMARY */
+  .module-summary { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border-subtle); }
+  .summary-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-muted); margin-bottom: 8px; }
+  .summary-points { display: flex; flex-wrap: wrap; gap: 7px; }
+  .summary-point { background: rgba(201,168,76,0.07); border: 1px solid rgba(201,168,76,0.14); border-radius: 6px; padding: 5px 11px; font-size: 12px; color: var(--text-body); }
+  .summary-point::before { content: '✓ '; color: var(--gold); font-weight: 700; }
+
+  /* FLOW */
+  .flow { display: flex; flex-wrap: wrap; gap: 0; align-items: center; margin: 14px 0; }
+  .flow-step { background: var(--accent); border: 1px solid var(--border); border-radius: 7px; padding: 9px 14px; font-size: 12.5px; color: var(--text); white-space: nowrap; }
+  .flow-arrow { color: var(--gold-muted); font-size: 17px; padding: 0 5px; }
+
+  /* LIFECYCLE */
+  .lifecycle { display: flex; flex-direction: column; }
+  .lifecycle-step { display: flex; gap: 18px; position: relative; }
+  .lifecycle-step:not(:last-child)::after { content: ''; position: absolute; left: 15px; top: 38px; bottom: 0; width: 2px; background: linear-gradient(180deg, var(--gold-muted), transparent); }
+  .lifecycle-dot { width: 32px; height: 32px; border-radius: 50%; background: rgba(201,168,76,0.12); border: 2px solid var(--gold-muted); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: var(--gold); flex-shrink: 0; margin-top: 8px; position: relative; z-index: 1; }
+  .lifecycle-content { flex: 1; padding: 6px 0 22px; }
+  .lifecycle-content h4 { color: var(--text); font-size: 14px; margin-bottom: 5px; }
+  .lifecycle-content p { color: var(--text-muted); font-size: 13px; margin: 0 0 5px; }
+  .lifecycle-content ul { margin: 5px 0 0; }
+  .lifecycle-content ul li { font-size: 12.5px; padding: 3px 0 3px 18px; }
+
+  /* COMPARE GRID */
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+  .compare-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .compare-card h4 { font-size: 13px; font-weight: 700; color: var(--gold-light); margin-bottom: 9px; }
+  .compare-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 7px; }
+  .compare-card ul li { font-size: 12.5px; padding: 3px 0 3px 18px; }
+
+  /* TERMS GRID */
+  .terms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+  .term-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 13px 15px; }
+  .term-name { font-size: 12px; font-weight: 700; color: var(--gold-light); margin-bottom: 4px; }
+  .term-def { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+  /* PILLS */
+  .pill-row { display: flex; flex-wrap: wrap; gap: 7px; margin: 10px 0; }
+  .pill { padding: 4px 13px; border-radius: 100px; font-size: 12px; font-weight: 600; background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.2); color: var(--gold-light); }
+
+  /* METHODOLOGY FRAMEWORK SECTIONS */
+  .framework-section { background: var(--navy-card2); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 36px; margin-bottom: 40px; scroll-margin-top: 20px; }
+  .framework-section h2 { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .framework-section .fs-eyebrow { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-muted); margin-bottom: 8px; }
+  .framework-section p { color: var(--text-body); margin-bottom: 12px; font-size: 14px; }
+  .framework-section h3 { font-size: 11px; font-weight: 700; color: var(--gold-light); text-transform: uppercase; letter-spacing: 1.5px; margin: 22px 0 11px; padding-bottom: 7px; border-bottom: 1px solid var(--border); }
+
+  /* ADDIE PHASES */
+  .addie-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 16px 0; }
+  .addie-phase { border-radius: 10px; padding: 16px 12px; text-align: center; border: 1px solid; }
+  .addie-phase.a-phase { background: rgba(59,130,246,0.08); border-color: rgba(59,130,246,0.25); }
+  .addie-phase.d-phase { background: rgba(139,92,246,0.08); border-color: rgba(139,92,246,0.25); }
+  .addie-phase.dev-phase { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.25); }
+  .addie-phase.i-phase { background: rgba(249,115,22,0.08); border-color: rgba(249,115,22,0.25); }
+  .addie-phase.e-phase { background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.25); }
+  .addie-letter { font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+  .a-phase .addie-letter { color: #60a5fa; }
+  .d-phase .addie-letter { color: #c084fc; }
+  .dev-phase .addie-letter { color: #4ade80; }
+  .i-phase .addie-letter { color: #fb923c; }
+  .e-phase .addie-letter { color: var(--gold-light); }
+  .addie-word { font-size: 11px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .addie-desc { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+
+  /* BLOOM'S PYRAMID */
+  .bloom-levels { display: flex; flex-direction: column; gap: 6px; margin: 16px 0; }
+  .bloom-level { border-radius: 8px; padding: 12px 16px; border: 1px solid; display: flex; align-items: flex-start; gap: 14px; }
+  .bloom-level.l1 { background: rgba(108,117,125,0.08); border-color: rgba(108,117,125,0.25); }
+  .bloom-level.l2 { background: rgba(14,165,233,0.07); border-color: rgba(14,165,233,0.25); }
+  .bloom-level.l3 { background: rgba(34,197,94,0.07); border-color: rgba(34,197,94,0.25); }
+  .bloom-level.l4 { background: rgba(249,115,22,0.07); border-color: rgba(249,115,22,0.25); }
+  .bloom-level.l5 { background: rgba(239,68,68,0.07); border-color: rgba(239,68,68,0.25); }
+  .bloom-level.l6 { background: rgba(168,85,247,0.07); border-color: rgba(168,85,247,0.25); }
+  .bloom-num { font-size: 22px; font-weight: 900; line-height: 1; min-width: 30px; margin-top: 1px; }
+  .l1 .bloom-num { color: #9ca3af; }
+  .l2 .bloom-num { color: #38bdf8; }
+  .l3 .bloom-num { color: #4ade80; }
+  .l4 .bloom-num { color: #fb923c; }
+  .l5 .bloom-num { color: #f87171; }
+  .l6 .bloom-num { color: #c084fc; }
+  .bloom-level-content h4 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+  .bloom-level-content p { font-size: 12.5px; color: var(--text-muted); margin: 0 0 5px; }
+  .bloom-verbs { font-size: 11px; color: var(--text-muted); font-style: italic; }
+
+  /* KOLB CYCLE */
+  .kolb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+  .kolb-card { border-radius: 9px; padding: 14px 16px; border: 1px solid; }
+  .kolb-card.ce { background: rgba(14,165,233,0.07); border-color: rgba(14,165,233,0.25); }
+  .kolb-card.ro { background: rgba(168,85,247,0.07); border-color: rgba(168,85,247,0.25); }
+  .kolb-card.ac { background: rgba(34,197,94,0.07); border-color: rgba(34,197,94,0.25); }
+  .kolb-card.ae { background: rgba(249,115,22,0.07); border-color: rgba(249,115,22,0.25); }
+  .kolb-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 5px; }
+  .kolb-card.ce h4 { color: #38bdf8; }
+  .kolb-card.ro h4 { color: #c084fc; }
+  .kolb-card.ac h4 { color: #4ade80; }
+  .kolb-card.ae h4 { color: #fb923c; }
+  .kolb-card p { font-size: 12.5px; color: var(--text-muted); margin: 0; }
+
+  /* KIRKPATRICK */
+  .kirk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+  .kirk-card { border-radius: 9px; padding: 14px 16px; border: 1px solid var(--border); background: rgba(255,255,255,0.02); }
+  .kirk-level { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold-muted); margin-bottom: 4px; }
+  .kirk-name { font-size: 14px; font-weight: 700; color: var(--gold-light); margin-bottom: 6px; }
+  .kirk-card p { font-size: 12.5px; color: var(--text-muted); margin: 0; }
+  .kirk-measures { margin-top: 6px; font-size: 11.5px; color: var(--text-muted); font-style: italic; }
+
+  /* COMPETENCY FRAMEWORK */
+  .competency-track { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0; }
+  .comp-stage { border-radius: 9px; padding: 16px 14px; border: 1px solid var(--border); background: rgba(255,255,255,0.02); position: relative; overflow: hidden; }
+  .comp-stage::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .comp-stage.novice::before { background: #6c757d; }
+  .comp-stage.developing::before { background: #0ea5e9; }
+  .comp-stage.proficient::before { background: #22c55e; }
+  .comp-stage.expert::before { background: var(--gold); }
+  .comp-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 5px; }
+  .novice .comp-label { color: #9ca3af; }
+  .developing .comp-label { color: #38bdf8; }
+  .proficient .comp-label { color: #4ade80; }
+  .expert .comp-label { color: var(--gold-light); }
+  .comp-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .comp-stage ul { margin: 0; padding: 0; list-style: none; }
+  .comp-stage ul li { font-size: 12px; color: var(--text-muted); padding: 3px 0 3px 16px; position: relative; }
+  .comp-stage ul li::before { content: '·'; position: absolute; left: 5px; color: var(--gold-muted); }
+
+  /* QUIZ */
+  .quiz-q { background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 13px 16px; margin-bottom: 8px; }
+  .quiz-q-label { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold-muted); margin-bottom: 5px; }
+  .quiz-q p { color: var(--text-body); font-size: 13.5px; margin: 0; }
+
+  /* GLOSSARY */
+  .glossary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .gloss-item { background: var(--navy-card2); border: 1px solid var(--border-subtle); border-radius: 9px; padding: 14px 16px; }
+  .gloss-term { font-size: 13px; font-weight: 700; color: var(--gold-light); margin-bottom: 5px; }
+  .gloss-def { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; }
+
+  /* SECTION DIVIDER */
+  .section-divider { border: none; border-top: 1px solid var(--border-subtle); margin: 40px 0; }
+
+  /* FINAL CTA */
+  #final-cta { background: linear-gradient(135deg, #0d1f3c, #111827); border: 1px solid var(--border); border-radius: 16px; padding: 48px; text-align: center; margin-top: 60px; }
+  #final-cta h2 { font-size: 28px; color: var(--gold); margin-bottom: 10px; }
+  #final-cta p { color: var(--text-muted); margin-bottom: 6px; }
+  #final-cta a { display: inline-block; margin-top: 16px; padding: 13px 34px; background: linear-gradient(135deg, var(--gold), var(--gold-muted)); color: #0a0f1e; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none; transition: opacity 0.2s; }
+  #final-cta a:hover { opacity: 0.85; }
+
+  /* MOBILE */
+  #menu-toggle { display: none; position: fixed; top: 14px; left: 14px; z-index: 200; background: var(--navy-light); border: 1px solid var(--border); color: var(--gold); padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 18px; }
+  @media (max-width: 920px) {
+    :root { --sidebar-w: 270px; }
+    #sidebar { transform: translateX(-100%); }
+    #sidebar.open { transform: translateX(0); }
+    #main { margin-left: 0; }
+    #content { padding: 28px 22px 60px; }
+    #hero { padding: 56px 24px 48px; }
+    .addie-grid { grid-template-columns: 1fr 1fr; }
+    .compare-grid, .terms-grid, .kolb-grid, .kirk-grid { grid-template-columns: 1fr; }
+    .competency-track { grid-template-columns: 1fr 1fr; }
+    .glossary-grid { grid-template-columns: 1fr; }
+    .lt-grid { grid-template-columns: 1fr; }
+    #menu-toggle { display: block; }
+  }
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-brand">
+    <div class="label">Elite Training Handbook</div>
+    <h2>Payments Domain Masterclass</h2>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Training Design</div>
+    <a class="nav-item active" href="#addie-section"><span class="nav-num">📐</span>ADDIE Framework</a>
+    <a class="nav-item" href="#bloom-section"><span class="nav-num">🧠</span>Bloom's Taxonomy</a>
+    <a class="nav-item" href="#kirk-section"><span class="nav-num">📊</span>Kirkpatrick Model</a>
+    <a class="nav-item" href="#competency-section"><span class="nav-num">🏆</span>Competency Framework</a>
+    <div class="nav-section-label">Foundations</div>
+    <a class="nav-item" href="#m1"><span class="nav-num">01</span>Introduction</a>
+    <a class="nav-item" href="#m2"><span class="nav-num">02</span>Wholesale Banking</a>
+    <a class="nav-item" href="#m3"><span class="nav-num">03</span>Corporate Products</a>
+    <a class="nav-item" href="#m4"><span class="nav-num">04</span>Payments Ecosystem</a>
+    <a class="nav-item" href="#m5"><span class="nav-num">05</span>Types of Payments</a>
+    <div class="nav-section-label">Infrastructure</div>
+    <a class="nav-item" href="#m6"><span class="nav-num">06</span>Payment Rails</a>
+    <a class="nav-item" href="#m7"><span class="nav-num">07</span>Payment Methods</a>
+    <a class="nav-item" href="#m8"><span class="nav-num">08</span>Payment Lifecycle</a>
+    <a class="nav-item" href="#m9"><span class="nav-num">09</span>STP</a>
+    <a class="nav-item" href="#m10"><span class="nav-num">10</span>Exception Handling</a>
+    <a class="nav-item" href="#m11"><span class="nav-num">11</span>Cut-off Times</a>
+    <div class="nav-section-label">Operations</div>
+    <a class="nav-item" href="#m12"><span class="nav-num">12</span>Nostro / Vostro</a>
+    <a class="nav-item" href="#m13"><span class="nav-num">13</span>SWIFT MT Messaging</a>
+    <a class="nav-item" href="#m14"><span class="nav-num">14</span>ISO 20022</a>
+    <a class="nav-item" href="#m15"><span class="nav-num">15</span>Hub Architecture</a>
+    <a class="nav-item" href="#m16"><span class="nav-num">16</span>Batch vs Real-Time</a>
+    <a class="nav-item" href="#m17"><span class="nav-num">17</span>High Availability</a>
+    <a class="nav-item" href="#m18"><span class="nav-num">18</span>Clearing & Settlement</a>
+    <a class="nav-item" href="#m19"><span class="nav-num">19</span>Liquidity Management</a>
+    <div class="nav-section-label">Compliance & Risk</div>
+    <a class="nav-item" href="#m20"><span class="nav-num">20</span>Compliance</a>
+    <a class="nav-item" href="#m21"><span class="nav-num">21</span>Screening Tools</a>
+    <a class="nav-item" href="#m22"><span class="nav-num">22</span>Fraud Detection</a>
+    <a class="nav-item" href="#m23"><span class="nav-num">23</span>Reconciliation</a>
+    <a class="nav-item" href="#m24"><span class="nav-num">24</span>Investigations</a>
+    <div class="nav-section-label">Strategy</div>
+    <a class="nav-item" href="#m25"><span class="nav-num">25</span>Modernization</a>
+    <a class="nav-item" href="#m26"><span class="nav-num">26</span>Case Study</a>
+    <a class="nav-item" href="#m27"><span class="nav-num">27</span>Executive Summary</a>
+    <a class="nav-item" href="#m28"><span class="nav-num">28</span>Trainer Analogies</a>
+    <a class="nav-item" href="#m29"><span class="nav-num">29</span>Interview Questions</a>
+    <a class="nav-item" href="#glossary"><span class="nav-num">📖</span>Glossary</a>
+  </div>
+  <div class="sidebar-footer">Ask Jacey · Wholesale Banking & Payments<br/><a href="mailto:askjaceynow@gmail.com">askjaceynow@gmail.com</a></div>
+</nav>
+
+<!-- MAIN -->
+<main id="main">
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-eyebrow">Ask Jacey · Elite Training Design</div>
+  <h1>Payments Domain<br/><span>Masterclass</span></h1>
+  <p class="hero-sub">A professionally designed training handbook built on evidence-based instructional design principles. Every module is engineered for measurable learning outcomes — not just information transfer.</p>
+  <div class="hero-methodology">
+    <span class="method-tag addie">ADDIE Framework</span>
+    <span class="method-tag bloom">Bloom's Taxonomy</span>
+    <span class="method-tag kirk">Kirkpatrick Model</span>
+    <span class="method-tag kolb">Kolb's Learning Cycle</span>
+    <span class="method-tag model">70:20:10 Model</span>
+    <span class="method-tag model">Competency Framework</span>
+    <span class="method-tag addie">Gagné's 9 Events</span>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">29</div><div class="stat-label">Modules</div></div>
+    <div class="stat"><div class="stat-num">6</div><div class="stat-label">Bloom's Levels</div></div>
+    <div class="stat"><div class="stat-num">87+</div><div class="stat-label">Activities</div></div>
+    <div class="stat"><div class="stat-num">4</div><div class="stat-label">Competency Levels</div></div>
+    <div class="stat"><div class="stat-num">38+</div><div class="stat-label">Glossary Terms</div></div>
+  </div>
+</section>
+
+<div id="content">
+
+<!-- ══════════════════════════════ TRAINING METHODOLOGY SECTIONS -->
+
+<div class="framework-section" id="addie-section">
+  <div class="fs-eyebrow">Instructional Design · Model 01</div>
+  <h2>ADDIE Framework — How This Training Was Built</h2>
+  <p>This masterclass was structured using the <strong>ADDIE model</strong> — the gold standard of instructional design used by elite corporate training programmes globally. ADDIE ensures that every element of training is purposeful, measurable, and effective.</p>
+  <div class="addie-grid">
+    <div class="addie-phase a-phase">
+      <div class="addie-letter">A</div>
+      <div class="addie-word">Analysis</div>
+      <div class="addie-desc">Target learners: wholesale banking professionals, RMs, ops, compliance. Identified knowledge gaps via role-based needs assessment. Determined prerequisite knowledge and performance outcomes.</div>
+    </div>
+    <div class="addie-phase d-phase">
+      <div class="addie-letter">D</div>
+      <div class="addie-word">Design</div>
+      <div class="addie-desc">29 modules sequenced from foundational to strategic. Bloom's taxonomy applied to each module. Kolb's cycle embedded in activities. Kirkpatrick framework defines success metrics.</div>
+    </div>
+    <div class="addie-phase dev-phase">
+      <div class="addie-letter">D</div>
+      <div class="addie-word">Development</div>
+      <div class="addie-desc">Content developed with trainer insights, real-world examples, and analogies. Each module includes objectives, explanation, examples, application activities, and a knowledge summary.</div>
+    </div>
+    <div class="addie-phase i-phase">
+      <div class="addie-letter">I</div>
+      <div class="addie-word">Implementation</div>
+      <div class="addie-desc">Delivered as a self-paced digital handbook with embedded activities. Designed for individual study, group facilitation, or blended learning. 70:20:10 transfer guidance included per module.</div>
+    </div>
+    <div class="addie-phase e-phase">
+      <div class="addie-letter">E</div>
+      <div class="addie-word">Evaluation</div>
+      <div class="addie-desc">Kirkpatrick Level 1–4 evaluation plan defined. Module-end knowledge checks assess Level 2. On-the-job transfer activities address Level 3. Business impact metrics target Level 4.</div>
+    </div>
+  </div>
+  <h3>Gagné's Nine Events of Instruction</h3>
+  <p>Each module in this handbook is structured to embed Gagné's nine events — the evidence-based sequence proven to maximise learning retention and transfer:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Event</th><th>How It's Applied in Each Module</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><strong>Gain attention</strong></td><td>Opening insight box or provocative question anchors the learner</td></tr>
+        <tr><td>2</td><td><strong>Inform of objectives</strong></td><td>Bloom's-verb learning objectives listed at the top of every module</td></tr>
+        <tr><td>3</td><td><strong>Stimulate recall</strong></td><td>Connections to prior modules drawn in opening paragraphs</td></tr>
+        <tr><td>4</td><td><strong>Present content</strong></td><td>Core concept explained with clear headings and structured text</td></tr>
+        <tr><td>5</td><td><strong>Provide guidance</strong></td><td>Trainer insight boxes highlight the most important points</td></tr>
+        <tr><td>6</td><td><strong>Elicit performance</strong></td><td>Application activities require the learner to apply, analyse, or evaluate</td></tr>
+        <tr><td>7</td><td><strong>Provide feedback</strong></td><td>70:20:10 section directs learners to seek feedback in real work</td></tr>
+        <tr><td>8</td><td><strong>Assess performance</strong></td><td>Module summary checklist and knowledge check questions</td></tr>
+        <tr><td>9</td><td><strong>Enhance retention</strong></td><td>Analogies, glossary, and cross-module references reinforce learning</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="framework-section" id="bloom-section">
+  <div class="fs-eyebrow">Instructional Design · Model 02</div>
+  <h2>Bloom's Taxonomy — Levels of Learning</h2>
+  <p>Every module in this handbook is tagged with a <strong>primary Bloom's level</strong> — indicating the cognitive depth you are expected to reach by the end of that module. The six levels form a hierarchy: each level builds on the one before. True expertise requires all six.</p>
+  <div class="bloom-levels">
+    <div class="bloom-level l1">
+      <div class="bloom-num">1</div>
+      <div class="bloom-level-content">
+        <h4>Remember — Foundational Knowledge</h4>
+        <p>Recall facts, definitions, and basic concepts without necessarily understanding them deeply.</p>
+        <div class="bloom-verbs">Key verbs: <em>define, list, name, recall, state, identify, recognise</em></div>
+      </div>
+    </div>
+    <div class="bloom-level l2">
+      <div class="bloom-num">2</div>
+      <div class="bloom-level-content">
+        <h4>Understand — Conceptual Grasp</h4>
+        <p>Explain ideas in your own words, interpret meaning, classify, compare, and summarise.</p>
+        <div class="bloom-verbs">Key verbs: <em>explain, describe, classify, compare, summarise, interpret, paraphrase</em></div>
+      </div>
+    </div>
+    <div class="bloom-level l3">
+      <div class="bloom-num">3</div>
+      <div class="bloom-level-content">
+        <h4>Apply — Practical Use</h4>
+        <p>Use knowledge in a new situation. Solve problems, execute procedures, demonstrate techniques.</p>
+        <div class="bloom-verbs">Key verbs: <em>apply, use, demonstrate, calculate, execute, implement, solve</em></div>
+      </div>
+    </div>
+    <div class="bloom-level l4">
+      <div class="bloom-num">4</div>
+      <div class="bloom-level-content">
+        <h4>Analyse — Breaking It Down</h4>
+        <p>Break information into components. Identify patterns, causes, and relationships. Distinguish between parts.</p>
+        <div class="bloom-verbs">Key verbs: <em>analyse, differentiate, examine, deconstruct, compare, investigate, distinguish</em></div>
+      </div>
+    </div>
+    <div class="bloom-level l5">
+      <div class="bloom-num">5</div>
+      <div class="bloom-level-content">
+        <h4>Evaluate — Making Judgements</h4>
+        <p>Justify decisions and recommendations. Critique solutions. Defend a position based on evidence.</p>
+        <div class="bloom-verbs">Key verbs: <em>evaluate, judge, justify, recommend, critique, argue, assess, defend</em></div>
+      </div>
+    </div>
+    <div class="bloom-level l6">
+      <div class="bloom-num">6</div>
+      <div class="bloom-level-content">
+        <h4>Create — Synthesis and Innovation</h4>
+        <p>Combine elements to produce new ideas, plans, or structures. Design solutions. Build proposals.</p>
+        <div class="bloom-verbs">Key verbs: <em>design, create, construct, formulate, propose, develop, plan, produce</em></div>
+      </div>
+    </div>
+  </div>
+  <div class="insight-box" style="margin-top:16px;">
+    <div class="box-icon">💡</div>
+    <div class="box-content">
+      <div class="box-label">How to Use the Bloom's Badges</div>
+      <p>Each module header shows a coloured badge indicating its <strong>primary cognitive level</strong>. Most modules target Levels 1–3 (Remember, Understand, Apply). Application activities push you to Levels 4–6 (Analyse, Evaluate, Create). Interview questions at the end target all six levels.</p>
+    </div>
+  </div>
+</div>
+
+<div class="framework-section" id="kirk-section">
+  <div class="fs-eyebrow">Instructional Design · Model 03</div>
+  <h2>Kirkpatrick Four-Level Evaluation Model</h2>
+  <p>This training is designed to deliver impact at all four Kirkpatrick levels — not just knowledge transfer. Use this framework to evaluate whether training is working, both during and after your learning journey.</p>
+  <div class="kirk-grid">
+    <div class="kirk-card">
+      <div class="kirk-level">Level 1</div>
+      <div class="kirk-name">Reaction — Did learners engage?</div>
+      <p>Did you find the material relevant, well-structured, and engaging? Would you recommend it to a colleague?</p>
+      <div class="kirk-measures">Measures: post-training feedback, engagement ratings, completion rates</div>
+    </div>
+    <div class="kirk-card">
+      <div class="kirk-level">Level 2</div>
+      <div class="kirk-name">Learning — Did knowledge increase?</div>
+      <p>Can you now explain payment concepts you couldn't before? Score yourself against the learning objectives in each module.</p>
+      <div class="kirk-measures">Measures: pre/post knowledge checks, module summary self-assessments</div>
+    </div>
+    <div class="kirk-card">
+      <div class="kirk-level">Level 3</div>
+      <div class="kirk-name">Behaviour — Is knowledge being applied?</div>
+      <p>Are you applying this knowledge in client conversations, in reviewing payment exceptions, or in discussing ISO 20022 with your team?</p>
+      <div class="kirk-measures">Measures: manager observation, 90-day follow-up, 70:20:10 transfer activities</div>
+    </div>
+    <div class="kirk-card">
+      <div class="kirk-level">Level 4</div>
+      <div class="kirk-name">Results — What changed at work?</div>
+      <p>Has your team's STP rate improved? Are client queries resolved faster? Has compliance risk decreased? Has a new product been sold?</p>
+      <div class="kirk-measures">Measures: STP rate, exception resolution time, client satisfaction, revenue metrics</div>
+    </div>
+  </div>
+  <h3>Kolb's Experiential Learning Cycle</h3>
+  <p>Each module is designed to activate all four stages of Kolb's Learning Cycle — ensuring that learners don't just absorb information, but experience, reflect, conceptualise, and experiment with it.</p>
+  <div class="kolb-grid">
+    <div class="kolb-card ce">
+      <h4>🔵 Concrete Experience</h4>
+      <p>Real-world examples and case studies in each module ground abstract concepts in tangible experience. You encounter the concept as it actually happens in banking.</p>
+    </div>
+    <div class="kolb-card ro">
+      <h4>🟣 Reflective Observation</h4>
+      <p>Reflection questions and "what could go wrong" scenarios encourage you to observe from multiple perspectives before drawing conclusions.</p>
+    </div>
+    <div class="kolb-card ac">
+      <h4>🟢 Abstract Conceptualisation</h4>
+      <p>Structured explanations, frameworks, tables, and definitions build the mental models you need to generalise learning beyond the specific example.</p>
+    </div>
+    <div class="kolb-card ae">
+      <h4>🟠 Active Experimentation</h4>
+      <p>Application activities, 70:20:10 transfer tasks, and interview questions push you to experiment — applying the concept to new situations at work.</p>
+    </div>
+  </div>
+</div>
+
+<div class="framework-section" id="competency-section">
+  <div class="fs-eyebrow">Instructional Design · Model 04</div>
+  <h2>Payments Domain Competency Framework</h2>
+  <p>Use this framework to honestly assess your current level and set a development goal. Each level describes observable, on-the-job behaviours — not just what you know, but what you can <em>do</em>.</p>
+  <div class="competency-track">
+    <div class="comp-stage novice">
+      <div class="comp-label">Level 1</div>
+      <div class="comp-name">Novice</div>
+      <ul>
+        <li>Can recall payment terminology</li>
+        <li>Understands domestic vs. cross-border differences</li>
+        <li>Knows major payment rails by name</li>
+        <li>Requires guidance on all payment tasks</li>
+        <li>Cannot diagnose exceptions independently</li>
+      </ul>
+    </div>
+    <div class="comp-stage developing">
+      <div class="comp-label">Level 2</div>
+      <div class="comp-name">Developing</div>
+      <ul>
+        <li>Explains the full payment lifecycle</li>
+        <li>Identifies the cause of common exceptions</li>
+        <li>Understands STP and what breaks it</li>
+        <li>Navigates Nostro/Vostro concepts correctly</li>
+        <li>Explains MT103 and ISO 20022 trade-offs</li>
+      </ul>
+    </div>
+    <div class="comp-stage proficient">
+      <div class="comp-label">Level 3</div>
+      <div class="comp-name">Proficient</div>
+      <ul>
+        <li>Advises clients on optimal payment method</li>
+        <li>Investigates and resolves complex exceptions</li>
+        <li>Explains compliance controls confidently</li>
+        <li>Analyses root causes of low STP rates</li>
+        <li>Participates in ISO 20022 migration projects</li>
+      </ul>
+    </div>
+    <div class="comp-stage expert">
+      <div class="comp-label">Level 4</div>
+      <div class="comp-name">Expert</div>
+      <ul>
+        <li>Designs end-to-end payment solutions</li>
+        <li>Evaluates and recommends payment hub architecture</li>
+        <li>Leads modernisation and ISO 20022 strategy</li>
+        <li>Advises on intraday liquidity strategy</li>
+        <li>Mentors others across all competency levels</li>
+      </ul>
+    </div>
+  </div>
+  <div class="remember-box" style="margin-top:16px;">
+    <div class="box-icon">✅</div>
+    <div class="box-content">
+      <div class="box-label">Development Goal</div>
+      <p>Before starting, <strong>honestly identify your current level</strong>. After completing this handbook, re-assess. The goal of most participants completing this training is to move from Novice → Developing or Developing → Proficient. Expert level is developed over years of on-the-job experience combined with formal knowledge.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider" />
+
+<!-- ══════════════════════════════ MODULE 1 -->
+<div class="module" id="m1">
+  <div class="module-header">
+    <div class="module-num-badge">1</div>
+    <div class="module-title-group">
+      <div class="module-tag-row">
+        <span class="module-tag">Module 01 · Foundations</span>
+        <span class="bloom-badge bloom-understand">🧠 Understand</span>
+      </div>
+      <h2>Introduction to the Payments Domain</h2>
+    </div>
+  </div>
+  <div class="module-body">
+    <div class="learning-objectives">
+      <div class="lo-label">Learning Objectives</div>
+      <ul class="lo-list">
+        <li>You will be able to <span class="bloom-verb">define</span> the payments domain and its key components</li>
+        <li>You will be able to <span class="bloom-verb">explain</span> why payments are strategically important to a wholesale bank</li>
+        <li>You will be able to <span class="bloom-verb">describe</span> the consequences of payment system failure on commerce and trust</li>
+        <li>You will be able to <span class="bloom-verb">identify</span> which banking roles require payments knowledge and why</li>
+      </ul>
+    </div>
+    <h3>What is the Payments Domain?</h3>
+    <p>The payments domain refers to the entire ecosystem of systems, institutions, processes, rules, and technologies that enable value to move from one party to another. This includes the underlying infrastructure (networks, messaging systems, settlement mechanisms), the participants (banks, corporates, regulators), and the instruments (wire transfers, ACH, SEPA credits, etc.).</p>
+    <p>Payments are often described as the "plumbing" of the financial system. Just as water runs silently through pipes behind walls, payments move silently through banking networks — until something goes wrong. A delayed payment, a failed settlement, or a compliance hold can immediately surface and cause significant business disruption.</p>
+    <h3>Why Payments Are Strategically Important</h3>
+    <p>In banking, payments are no longer just an operational function — they are a core revenue driver. Transaction banking contributes significantly to wholesale banking revenues through transaction fees, FX spread income, float income, and client retention.</p>
+    <ul>
+      <li><strong>Fee income:</strong> Banks charge per-transaction fees, especially on cross-border and urgent payments</li>
+      <li><strong>FX revenue:</strong> Currency conversion generates spread income for the bank</li>
+      <li><strong>Float income:</strong> Funds temporarily held during processing earn interest</li>
+      <li><strong>Relationship deepening:</strong> Payment mandates anchor corporate clients to their primary bank</li>
+    </ul>
+    <h3>The Consequences of Payment Failure</h3>
+    <ul>
+      <li>Businesses cannot pay suppliers → supply chains stall and contracts breach</li>
+      <li>Employees do not receive salaries → consumer confidence erodes</li>
+      <li>Securities trades do not settle → market liquidity is disrupted</li>
+      <li>Customer trust erodes → banking relationships are terminated</li>
+      <li>Regulatory action → fines and loss of operating licence</li>
+    </ul>
+    <div class="insight-box">
+      <div class="box-icon">💡</div>
+      <div class="box-content">
+        <div class="box-label">Trainer Insight</div>
+        <p>In banking, payments are not just transactions — they are a <strong>strategic business function</strong> that touches every product, every client, and every revenue line. A professional who truly understands payments can engage with any part of the bank.</p>
+      </div>
+    </div>
+    <div class="apply-activity">
+      <div class="apply-activity-header">🎯 Application Activities — Bloom's Levels 3 & 4</div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#4ade80;">Apply (Level 3)</div><p>Think about your own role. Write down three ways that payment performance — speed, accuracy, compliance — directly affects your clients or your team's work. Be specific.</p></div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#fb923c;">Analyse (Level 4)</div><p>Analyse this statement: "Payments are a commodity — clients don't care which bank processes them as long as it works." Do you agree or disagree? What evidence supports your position?</p></div>
+    </div>
+    <div class="learning-transfer">
+      <div class="lt-header">70 · 20 · 10 — Learning Transfer Plan</div>
+      <div class="lt-grid">
+        <div class="lt-item"><div class="lt-pct">70%</div><div class="lt-type">On the Job</div><div class="lt-desc">Next time a client queries a payment, note every step it passes through. Map it to the payment lifecycle.</div></div>
+        <div class="lt-item"><div class="lt-pct">20%</div><div class="lt-type">Social</div><div class="lt-desc">Ask your Relationship Manager: "What is our top corporate client's biggest payment pain point?" Use that answer to frame future modules.</div></div>
+        <div class="lt-item"><div class="lt-pct">10%</div><div class="lt-type">Formal</div><div class="lt-desc">Complete this module. Review the Competency Framework and honestly assess your current level.</div></div>
+      </div>
+    </div>
+    <div class="module-summary">
+      <div class="summary-label">Module Summary</div>
+      <div class="summary-points">
+        <span class="summary-point">Payments = ecosystem of systems, institutions, and processes</span>
+        <span class="summary-point">Payments are strategically important — fees, FX, float, client retention</span>
+        <span class="summary-point">Payment failure cascades across business, trade, and trust</span>
+        <span class="summary-point">Payments knowledge is essential across all wholesale banking roles</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ MODULE 2 -->
+<div class="module" id="m2">
+  <div class="module-header">
+    <div class="module-num-badge">2</div>
+    <div class="module-title-group">
+      <div class="module-tag-row">
+        <span class="module-tag">Module 02 · Foundations</span>
+        <span class="bloom-badge bloom-understand">🧠 Understand</span>
+      </div>
+      <h2>Wholesale Banking Fundamentals</h2>
+    </div>
+  </div>
+  <div class="module-body">
+    <div class="learning-objectives">
+      <div class="lo-label">Learning Objectives</div>
+      <ul class="lo-list">
+        <li>You will be able to <span class="bloom-verb">define</span> wholesale banking and identify its core client segments</li>
+        <li>You will be able to <span class="bloom-verb">compare</span> retail and wholesale banking across multiple dimensions</li>
+        <li>You will be able to <span class="bloom-verb">explain</span> why the value-volume distinction matters for how payments are designed and priced</li>
+      </ul>
+    </div>
+    <h3>What is Wholesale Banking?</h3>
+    <p>Wholesale banking (also called institutional banking or corporate banking) refers to banking services delivered to large, sophisticated clients. These clients have complex financial needs: they operate across multiple countries, in multiple currencies, and require bespoke financial solutions. Their banking needs touch liquidity, trade, risk, capital, and technology simultaneously.</p>
+    <div class="terms-grid">
+      <div class="term-card"><div class="term-name">Corporates</div><div class="term-def">Large companies — from domestic conglomerates to Fortune 500 multinationals — needing treasury, trade, and cash management services.</div></div>
+      <div class="term-card"><div class="term-name">Financial Institutions</div><div class="term-def">Other banks, insurance companies, asset managers, and pension funds requiring interbank services and correspondent banking.</div></div>
+      <div class="term-card"><div class="term-name">Governments & Sovereigns</div><div class="term-def">Central banks, government ministries, and state entities with large-scale payment, investment, and funding needs.</div></div>
+      <div class="term-card"><div class="term-name">Supranationals</div><div class="term-def">Institutions like the IMF, World Bank, or regional development banks requiring specialised banking and payment infrastructure.</div></div>
+    </div>
+    <h3>Retail vs. Wholesale Banking</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Dimension</th><th>Retail Banking</th><th>Wholesale Banking</th></tr></thead>
+        <tbody>
+          <tr><td>Client type</td><td>Individuals, small businesses</td><td>Corporates, FIs, governments</td></tr>
+          <tr><td>Volume vs value</td><td>High volume, low individual value</td><td>Lower volume, very high value</td></tr>
+          <tr><td>Product design</td><td>Standardised mass-market</td><td>Bespoke, structured solutions</td></tr>
+          <tr><td>Relationship model</td><td>Digital-first, self-service</td><td>Dedicated Relationship Manager</td></tr>
+          <tr><td>Payment examples</td><td>Card swipe, ATM withdrawal</td><td>Bulk RTGS, SWIFT wire, trade settlement</td></tr>
+          <tr><td>Pricing</td><td>Fixed/standard fees</td><td>Negotiated, volume-based</td></tr>
+          <tr><td>Regulatory complexity</td><td>Moderate</td><td>High — AML, KYC, sanctions, capital</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="insight-box">
+      <div class="box-icon">🎯</div>
+      <div class="box-content">
+        <div class="box-label">Core Principle</div>
+        <p><strong>Retail banking is volume-driven.</strong> Profitability comes from scale across millions of customers. <strong>Wholesale banking is value-driven.</strong> One large corporate treasury mandate can generate more revenue than thousands of retail transactions.</p>
+      </div>
+    </div>
+    <div class="apply-activity">
+      <div class="apply-activity-header">🎯 Application Activities — Bloom's Levels 2 & 4</div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#38bdf8;">Understand (Level 2)</div><p>In your own words, explain to a colleague who works in retail banking why a wholesale bank's approach to payment errors is fundamentally different from a retail bank's approach. What does "value-driven" actually mean for operations?</p></div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#fb923c;">Analyse (Level 4)</div><p>Think of one of your bank's wholesale clients. Which of the four wholesale client types do they belong to? How does their segment shape what payment services they need? What would happen if they were treated like a retail client?</p></div>
+    </div>
+    <div class="learning-transfer">
+      <div class="lt-header">70 · 20 · 10 — Learning Transfer Plan</div>
+      <div class="lt-grid">
+        <div class="lt-item"><div class="lt-pct">70%</div><div class="lt-type">On the Job</div><div class="lt-desc">Review your three most active client accounts. Classify each one by the wholesale client segment table above. Note what payment services each needs.</div></div>
+        <div class="lt-item"><div class="lt-pct">20%</div><div class="lt-type">Social</div><div class="lt-desc">Ask a senior colleague: "What is the single biggest difference you notice between servicing a corporate vs. a financial institution in payments?" Listen for value vs. volume thinking.</div></div>
+        <div class="lt-item"><div class="lt-pct">10%</div><div class="lt-type">Formal</div><div class="lt-desc">Complete this module and mark yourself against objective 3 — can you explain the value-volume distinction fluently?</div></div>
+      </div>
+    </div>
+    <div class="module-summary">
+      <div class="summary-label">Module Summary</div>
+      <div class="summary-points">
+        <span class="summary-point">Wholesale clients = corporates, FIs, governments, supranationals</span>
+        <span class="summary-point">Services are bespoke, relationship-led, and high-value</span>
+        <span class="summary-point">Retail = volume-driven; Wholesale = value-driven</span>
+        <span class="summary-point">Wholesale payments = complex, multi-currency, cross-border</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ MODULE 3 -->
+<div class="module" id="m3">
+  <div class="module-header">
+    <div class="module-num-badge">3</div>
+    <div class="module-title-group">
+      <div class="module-tag-row">
+        <span class="module-tag">Module 03 · Foundations</span>
+        <span class="bloom-badge bloom-understand">🧠 Understand</span>
+      </div>
+      <h2>Corporate Banking Products</h2>
+    </div>
+  </div>
+  <div class="module-body">
+    <div class="learning-objectives">
+      <div class="lo-label">Learning Objectives</div>
+      <ul class="lo-list">
+        <li>You will be able to <span class="bloom-verb">identify</span> and <span class="bloom-verb">describe</span> the three core corporate banking product categories</li>
+        <li>You will be able to <span class="bloom-verb">explain</span> how each product category connects to the payments domain</li>
+        <li>You will be able to <span class="bloom-verb">distinguish</span> between cash management, liquidity management, and trade finance instruments</li>
+      </ul>
+    </div>
+    <h3>1. Cash Management</h3>
+    <p>Cash management helps corporates manage inflows, outflows, and account balances across their banking relationships. It ensures the right amount of cash is in the right place at the right time — the foundational service that drives most payment transactions.</p>
+    <ul>
+      <li><strong>Receivables collection:</strong> Automating the collection of customer payments (direct debit, payment gateway)</li>
+      <li><strong>Vendor / payables payments:</strong> Paying suppliers efficiently and on time</li>
+      <li><strong>Payroll disbursement:</strong> Bulk salary payments, typically via ACH or SWIFT</li>
+      <li><strong>Account statements:</strong> Structured account data for reconciliation</li>
+      <li><strong>Notional pooling:</strong> Aggregating balances across entities for interest without physically moving funds</li>
+      <li><strong>Zero-balancing / sweeping:</strong> Automatically consolidating idle balances into a master account</li>
+    </ul>
+    <h3>2. Liquidity Management</h3>
+    <p>Liquidity management ensures a corporate always has sufficient funds where they are needed, while minimising idle cash. Large multinationals constantly face the challenge of surplus in one country and a shortfall in another.</p>
+    <div class="example-box">
+      <div class="box-icon">🌏</div>
+      <div class="box-content">
+        <div class="box-label">Real-World Example</div>
+        <p>A multinational has $10M idle in its Singapore subsidiary but its India subsidiary needs $3M to pay suppliers today. Rather than an expensive local loan, the treasury uses <strong>intra-group lending</strong> facilitated by the bank — pre-positioning the Singapore surplus to fund India's obligations, maximising group-level capital efficiency.</p>
+      </div>
+    </div>
+    <h3>3. Trade Finance</h3>
+    <p>Trade finance supports financing and risk management of import/export transactions. When buyers and sellers are in different countries and may not fully trust each other, banks provide guarantees and financing instruments that allow trade to flow.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Instrument</th><th>What It Does</th><th>Who Benefits</th><th>Payment Trigger</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Letter of Credit (LC)</strong></td><td>Bank guarantees payment to exporter if shipping documents comply</td><td>Exporter (payment certainty), Importer (delivery certainty)</td><td>Presentation of conforming documents</td></tr>
+          <tr><td><strong>Bank Guarantee</strong></td><td>Bank promises to pay beneficiary if applicant defaults</td><td>Seller / contractor needing performance assurance</td><td>Beneficiary makes a demand/claim</td></tr>
+          <tr><td><strong>Documentary Collection</strong></td><td>Bank releases title documents only on payment</td><td>Both parties in medium-trust trade relationships</td><td>Buyer pays or accepts bill of exchange</td></tr>
+          <tr><td><strong>Supply Chain Finance</strong></td><td>Allows suppliers early payment at a discount; buyer gets extended terms</td><td>Suppliers (cash flow), Buyers (extended DPO)</td><td>Invoice approval by buyer</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="remember-box">
+      <div class="box-icon">✅</div>
+      <div class="box-content">
+        <div class="box-label">Remember This</div>
+        <p>Trade finance and payments are deeply linked. An LC triggers a payment when documents are presented. A bank guarantee may trigger a payment on default. Understanding trade finance instruments helps you understand why certain payments behave differently and why compliance scrutiny on trade payments is so high.</p>
+      </div>
+    </div>
+    <div class="apply-activity">
+      <div class="apply-activity-header">🎯 Application Activities — Bloom's Levels 3 & 5</div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#4ade80;">Apply (Level 3)</div><p>A client asks: "Should I use a Letter of Credit or an open-account trade payment to pay my new supplier in Vietnam?" Using what you know about LC and cash management, draft a two-paragraph response that explains the trade-offs.</p></div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#f87171;">Evaluate (Level 5)</div><p>Evaluate this claim: "Cash management and liquidity management are essentially the same product." Do you agree or disagree? Support your answer with at least two distinguishing examples.</p></div>
+    </div>
+    <div class="learning-transfer">
+      <div class="lt-header">70 · 20 · 10 — Learning Transfer Plan</div>
+      <div class="lt-grid">
+        <div class="lt-item"><div class="lt-pct">70%</div><div class="lt-type">On the Job</div><div class="lt-desc">Identify one client that uses all three product categories (cash management, liquidity management, trade finance). Map their payment flows across all three.</div></div>
+        <div class="lt-item"><div class="lt-pct">20%</div><div class="lt-type">Social</div><div class="lt-desc">Shadow a trade finance specialist for one client conversation. Notice how they connect the trade instrument to the underlying payment requirement.</div></div>
+        <div class="lt-item"><div class="lt-pct">10%</div><div class="lt-type">Formal</div><div class="lt-desc">Complete this module. Can you explain the LC payment trigger without looking at your notes?</div></div>
+      </div>
+    </div>
+    <div class="module-summary">
+      <div class="summary-label">Module Summary</div>
+      <div class="summary-points">
+        <span class="summary-point">Cash management = manage inflows, outflows, balances</span>
+        <span class="summary-point">Liquidity management = right funds, right place, right time</span>
+        <span class="summary-point">Trade finance = instruments that enable and de-risk cross-border trade</span>
+        <span class="summary-point">All three product categories generate and govern payment flows</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ MODULE 4 -->
+<div class="module" id="m4">
+  <div class="module-header">
+    <div class="module-num-badge">4</div>
+    <div class="module-title-group">
+      <div class="module-tag-row">
+        <span class="module-tag">Module 04 · Foundations</span>
+        <span class="bloom-badge bloom-understand">🧠 Understand</span>
+      </div>
+      <h2>The Payments Ecosystem</h2>
+    </div>
+  </div>
+  <div class="module-body">
+    <div class="learning-objectives">
+      <div class="lo-label">Learning Objectives</div>
+      <ul class="lo-list">
+        <li>You will be able to <span class="bloom-verb">name</span> and <span class="bloom-verb">describe</span> all six core participants in a payment transaction</li>
+        <li>You will be able to <span class="bloom-verb">explain</span> the role of correspondent banking in enabling cross-border payments</li>
+        <li>You will be able to <span class="bloom-verb">trace</span> the participant chain in a real cross-border payment example</li>
+      </ul>
+    </div>
+    <h3>Why the Ecosystem is Complex</h3>
+    <p>Unlike a simple in-person cash transaction, a bank payment — especially cross-border — involves multiple intermediaries, systems, and rule sets. Each participant plays a specific role, and each handoff between participants is a potential point of delay, error, or failure. Understanding who does what at each step is fundamental to diagnosing problems and designing better payment solutions.</p>
+    <h3>Core Participants</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Participant</th><th>Role</th><th>In Our Example</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Ordering Customer</strong></td><td>The payer — instructs the payment</td><td>Indian manufacturing company</td></tr>
+          <tr><td>2</td><td><strong>Originating Bank</strong></td><td>Receives instruction, initiates the payment</td><td>Indian bank (SBI, HDFC, etc.)</td></tr>
+          <tr><td>3</td><td><strong>Correspondent / Intermediary Bank</strong></td><td>Routes payment when no direct relationship exists</td><td>JPMorgan Chase (USD correspondent)</td></tr>
+          <tr><td>4</td><td><strong>Clearing House</strong></td><td>Calculates net obligations between banks</td><td>CHIPS (USD) or TARGET2 (EUR)</td></tr>
+          <tr><td>5</td><td><strong>Beneficiary Bank</strong></td><td>Receives funds and credits the final account</td><td>Deutsche Bank, Frankfurt</td></tr>
+          <tr><td>6</td><td><strong>Beneficiary</strong></td><td>The ultimate recipient</td><td>German exporter (Schmidt GmbH)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Cross-Border Payment Flow: Visual</h3>
+    <div class="flow" style="flex-wrap:wrap;gap:6px;">
+      <div class="flow-step">Indian Importer</div><div class="flow-arrow">→</div>
+      <div class="flow-step">Indian Bank</div><div class="flow-arrow">→</div>
+      <div class="flow-step">US Correspondent (USD)</div><div class="flow-arrow">→</div>
+      <div class="flow-step">European Correspondent</div><div class="flow-arrow">→</div>
+      <div class="flow-step">German Bank</div><div class="flow-arrow">→</div>
+      <div class="flow-step">German Exporter</div>
+    </div>
+    <h3>Correspondent Banking: The Mechanism</h3>
+    <p>Not every bank has a direct relationship with every other bank globally. Correspondent banking solves this. Bank A (India) holds a USD account at Bank B (US). When Bank A needs to send USD, it instructs Bank B via SWIFT to move funds on its behalf — debiting the correspondent account and crediting the beneficiary bank.</p>
+    <div class="warning-box">
+      <div class="box-icon">⚠️</div>
+      <div class="box-content">
+        <div class="box-label">De-Risking: A Growing Problem</div>
+        <p>Many large banks have been <strong>terminating correspondent relationships</strong> in high-risk jurisdictions to reduce their AML and sanctions exposure. This is called "de-risking." The consequence is that some countries are becoming financially isolated — payments become slower, more expensive, or impossible. De-risking is a major geopolitical and financial inclusion issue.</p>
+      </div>
+    </div>
+    <div class="apply-activity">
+      <div class="apply-activity-header">🎯 Application Activities — Bloom's Levels 2 & 4</div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#38bdf8;">Understand (Level 2)</div><p>Draw the participant chain for a payment from a UK importer paying a Brazilian exporter in USD. Label each participant's role. How many correspondent banks might be involved?</p></div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#fb923c;">Analyse (Level 4)</div><p>A client complains that their payment "disappeared" after leaving your bank. Using the participant chain, identify three specific points where the payment could be delayed or held, and explain the most likely cause at each point.</p></div>
+    </div>
+    <div class="learning-transfer">
+      <div class="lt-header">70 · 20 · 10 — Learning Transfer Plan</div>
+      <div class="lt-grid">
+        <div class="lt-item"><div class="lt-pct">70%</div><div class="lt-type">On the Job</div><div class="lt-desc">The next time you handle a cross-border payment query, physically trace every participant it touched. Ask the operations team to walk you through the SWIFT message trail.</div></div>
+        <div class="lt-item"><div class="lt-pct">20%</div><div class="lt-type">Social</div><div class="lt-desc">Ask your correspondent banking team: "Which of our correspondent relationships are at risk of de-risking and what corridors would be affected?" Listen for how this impacts clients.</div></div>
+        <div class="lt-item"><div class="lt-pct">10%</div><div class="lt-type">Formal</div><div class="lt-desc">Without looking at your notes, draw the six-participant ecosystem from memory and explain each role in one sentence.</div></div>
+      </div>
+    </div>
+    <div class="module-summary">
+      <div class="summary-label">Module Summary</div>
+      <div class="summary-points">
+        <span class="summary-point">Six core participants: ordering customer → originating bank → correspondent → clearing house → beneficiary bank → beneficiary</span>
+        <span class="summary-point">Each handoff = potential delay, cost, or failure point</span>
+        <span class="summary-point">Correspondent banking bridges gaps where direct relationships don't exist</span>
+        <span class="summary-point">De-risking = growing problem for cross-border payment access</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ MODULE 5 -->
+<div class="module" id="m5">
+  <div class="module-header">
+    <div class="module-num-badge">5</div>
+    <div class="module-title-group">
+      <div class="module-tag-row">
+        <span class="module-tag">Module 05 · Foundations</span>
+        <span class="bloom-badge bloom-remember">🔘 Remember</span>
+      </div>
+      <h2>Types of Payments</h2>
+    </div>
+  </div>
+  <div class="module-body">
+    <div class="learning-objectives">
+      <div class="lo-label">Learning Objectives</div>
+      <ul class="lo-list">
+        <li>You will be able to <span class="bloom-verb">classify</span> payments by geography, value, and urgency</li>
+        <li>You will be able to <span class="bloom-verb">match</span> payment types to the appropriate rail, method, and processing approach</li>
+        <li>You will be able to <span class="bloom-verb">explain</span> why classification matters for routing decisions and SLAs</li>
+      </ul>
+    </div>
+    <h3>By Geography</h3>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h4>🏠 Domestic Payments</h4>
+        <p>Both payer and payee in the same country. Local currency, national clearing system, governed by domestic rules.</p>
+        <p style="font-size:12px;color:#5a7090;"><em>Example: Chennai company paying Pune vendor via NEFT/IMPS</em></p>
+      </div>
+      <div class="compare-card">
+        <h4>🌐 Cross-Border Payments</h4>
+        <p>Payer and payee in different countries. FX conversion required, correspondent banking used, multi-jurisdictional compliance.</p>
+        <p style="font-size:12px;color:#5a7090;"><em>Example: Indian company paying Japanese supplier via SWIFT</em></p>
+      </div>
+    </div>
+    <h3>By Value and Urgency</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Type</th><th>Value</th><th>Speed</th><th>Typical Use</th><th>Processing Mode</th></tr></thead>
+        <tbody>
+          <tr><td><strong>High Value / Urgent</strong></td><td>Large</td><td>Same day / hours</td><td>Treasury funding, securities settlement, M&amp;A</td><td>RTGS, individual</td></tr>
+          <tr><td><strong>Standard</strong></td><td>Medium-Large</td><td>1–2 business days</td><td>Supplier payments, intercompany transfers</td><td>SWIFT, correspondent</td></tr>
+          <tr><td><strong>Low Value / Bulk</strong></td><td>Small</td><td>End of day / next day</td><td>Payroll, mass vendor payments, utilities</td><td>ACH, batch</td></tr>
+          <tr><td><strong>Instant</strong></td><td>Any (capped)</td><td>Seconds</td><td>Urgent SME, consumer P2P, emergency disbursement</td><td>RTP rails (UPI, FPS)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="insight-box">
+      <div class="box-icon">💡</div>
+      <div class="box-content">
+        <div class="box-label">Why Classification Matters</div>
+        <p>Payment classification is not just an academic exercise. The payment hub uses classification to determine: which rail to use, which cut-off time applies, which compliance checks are triggered, and what SLA is committed to the client. Getting the classification wrong wastes cost or misses deadlines.</p>
+      </div>
+    </div>
+    <div class="apply-activity">
+      <div class="apply-activity-header">🎯 Application Activity — Bloom's Level 3</div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#4ade80;">Apply (Level 3)</div><p>Classify each of the following payments by geography, value tier, and recommended processing mode: (a) $500M treasury repo settlement, (b) 10,000 employee salary credits, (c) €1,200 supplier invoice payment to Italy, (d) emergency $50,000 wire to a counterparty whose deal closes in 2 hours.</p></div>
+    </div>
+    <div class="learning-transfer">
+      <div class="lt-header">70 · 20 · 10 — Learning Transfer Plan</div>
+      <div class="lt-grid">
+        <div class="lt-item"><div class="lt-pct">70%</div><div class="lt-type">On the Job</div><div class="lt-desc">Review yesterday's payment report. Categorise 10 payments by geography, value, and urgency. Note which rail was used for each. Were all categorised correctly?</div></div>
+        <div class="lt-item"><div class="lt-pct">20%</div><div class="lt-type">Social</div><div class="lt-desc">Ask your operations team: "What is the most common mis-classification you see in client payment instructions?" Learn from their daily experience.</div></div>
+        <div class="lt-item"><div class="lt-pct">10%</div><div class="lt-type">Formal</div><div class="lt-desc">Memorise the four urgency tiers and their characteristics without reference to this handbook.</div></div>
+      </div>
+    </div>
+    <div class="module-summary">
+      <div class="summary-label">Module Summary</div>
+      <div class="summary-points">
+        <span class="summary-point">Classify by geography: domestic vs. cross-border</span>
+        <span class="summary-point">Classify by value: high vs. low value</span>
+        <span class="summary-point">Classify by urgency: urgent, standard, bulk, instant</span>
+        <span class="summary-point">Classification drives rail selection, cut-off, compliance, and SLA</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ MODULES 6–29: condensed with objectives + activities + transfer ══ -->
+
+<!-- MODULE 6 -->
+<div class="module" id="m6">
+  <div class="module-header">
+    <div class="module-num-badge">6</div>
+    <div class="module-title-group">
+      <div class="module-tag-row"><span class="module-tag">Module 06 · Infrastructure</span><span class="bloom-badge bloom-remember">🔘 Remember</span></div>
+      <h2>Payment Rails</h2>
+    </div>
+  </div>
+  <div class="module-body">
+    <div class="learning-objectives">
+      <div class="lo-label">Learning Objectives</div>
+      <ul class="lo-list">
+        <li>You will be able to <span class="bloom-verb">identify</span> the six major global payment rails and their regions</li>
+        <li>You will be able to <span class="bloom-verb">explain</span> the critical distinction between SWIFT (messaging) and actual money movement</li>
+        <li>You will be able to <span class="bloom-verb">match</span> a payment to the appropriate rail based on currency and geography</li>
+      </ul>
+    </div>
+    <h3>What is a Payment Rail?</h3>
+    <p>A payment rail is the underlying network infrastructure over which payment instructions and/or funds move. Different rails serve different regions, currencies, and value tiers. The payment hub selects the appropriate rail for each payment automatically — but understanding this selection is essential for explaining routing decisions to clients and diagnosing delays.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Rail</th><th>Region</th><th>Type</th><th>Description</th><th>Critical Fact</th></tr></thead>
+        <tbody>
+          <tr><td><strong>SWIFT</strong></td><td>Global</td><td>Messaging</td><td>Secure messaging network connecting 11,000+ institutions globally. Carries payment instructions — not money itself.</td><td>SWIFT sends messages. Funds move through Nostro accounts.</td></tr>
+          <tr><td><strong>CHIPS</strong></td><td>USA</td><td>Private Clearing</td><td>Clears large-value USD payments using multilateral netting.</td><td>Handles ~95% of all international USD payments by value</td></tr>
+          <tr><td><strong>Fedwire</strong></td><td>USA</td><td>RTGS</td><td>Federal Reserve RTGS for USD. Final and irrevocable upon settlement.</td><td>Every settled Fedwire payment is guaranteed by the Federal Reserve</td></tr>
+          <tr><td><strong>SEPA</strong></td><td>Europe</td><td>Clearing</td><td>Single Euro Payments Area — harmonised EUR payment rules across 36 countries.</td><td>SEPA Credit Transfer and SEPA Direct Debit are the key schemes</td></tr>
+          <tr><td><strong>TARGET2</strong></td><td>Eurozone</td><td>RTGS</td><td>Eurosystem RTGS for EUR large-value payments. Processes €2T+ per day.</td><td>Being upgraded to T2 as part of the Eurosystem's modernisation</td></tr>
+          <tr><td><strong>CIPS</strong></td><td>China/Global</td><td>Clearing</td><td>China's Cross-Border Interbank Payment System for RMB transactions.</td><td>Growing strategic importance as RMB internationalises</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="definition-box">
+      <div class="box-icon">📌</div>
+      <div class="box-content">
+        <div class="box-label">Most Critical Distinction in Payments</div>
+        <p><strong>SWIFT is NOT a payment rail that moves money.</strong> When Bank A sends an MT103 via SWIFT to Bank B, no money moves through SWIFT. The actual funds move through pre-positioned correspondent account balances. SWIFT carries only the secure, standardised instruction. This is the single most common misconception in the industry.</p>
+      </div>
+    </div>
+    <div class="apply-activity">
+      <div class="apply-activity-header">🎯 Application Activities — Bloom's Levels 2 & 4</div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#38bdf8;">Understand (Level 2)</div><p>Explain in plain language (as if to a corporate client): why does sending a USD payment via SWIFT still take time, if SWIFT messages travel instantly? What is actually taking time?</p></div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#fb923c;">Analyse (Level 4)</div><p>A client asks why their EUR payment to France needs to go through SEPA, but their USD payment to the same French company goes through SWIFT/CHIPS. Analyse the difference and explain clearly.</p></div>
+    </div>
+    <div class="learning-transfer">
+      <div class="lt-header">70 · 20 · 10 — Learning Transfer Plan</div>
+      <div class="lt-grid">
+        <div class="lt-item"><div class="lt-pct">70%</div><div class="lt-type">On the Job</div><div class="lt-desc">Pull up any cross-border payment in your system. Identify which rail it used and why. Was it the optimal choice given the currency and urgency?</div></div>
+        <div class="lt-item"><div class="lt-pct">20%</div><div class="lt-type">Social</div><div class="lt-desc">Ask your correspondent banking team to explain which of your bank's correspondent relationships map to which rails. Build a mental map.</div></div>
+        <div class="lt-item"><div class="lt-pct">10%</div><div class="lt-type">Formal</div><div class="lt-desc">Without notes, list all six rails, their regions, and their types from memory.</div></div>
+      </div>
+    </div>
+    <div class="module-summary">
+      <div class="summary-label">Module Summary</div>
+      <div class="summary-points">
+        <span class="summary-point">Payment rail = the network infrastructure payments travel through</span>
+        <span class="summary-point">SWIFT = messaging only — critical distinction, not money movement</span>
+        <span class="summary-point">CHIPS/Fedwire = USD; SEPA/TARGET2 = EUR; CIPS = RMB</span>
+        <span class="summary-point">Rail selection depends on currency, geography, urgency, and value</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 7 -->
+<div class="module" id="m7">
+  <div class="module-header">
+    <div class="module-num-badge">7</div>
+    <div class="module-title-group">
+      <div class="module-tag-row"><span class="module-tag">Module 07 · Infrastructure</span><span class="bloom-badge bloom-apply">✅ Apply</span></div>
+      <h2>Payment Methods</h2>
+    </div>
+  </div>
+  <div class="module-body">
+    <div class="learning-objectives">
+      <div class="lo-label">Learning Objectives</div>
+      <ul class="lo-list">
+        <li>You will be able to <span class="bloom-verb">describe</span> the key characteristics of wire transfer, ACH, and real-time payments</li>
+        <li>You will be able to <span class="bloom-verb">apply</span> the correct payment method to a given client scenario</li>
+        <li>You will be able to <span class="bloom-verb">compare</span> the speed, cost, and use-case trade-offs of each method</li>
+      </ul>
+    </div>
+    <h3>Wire Transfer (SWIFT Wire)</h3>
+    <p>The primary method for cross-border, high-value payments. Uses SWIFT messaging (MT103 or ISO 20022 pacs.008). Funds move through correspondent accounts. Higher cost but essential for international and time-critical payments.</p>
+    <ul>
+      <li><strong>Speed:</strong> Same day to 2 business days (corridor-dependent)</li>
+      <li><strong>Best for:</strong> Cross-border, high-value, urgent, securities settlement</li>
+      <li><strong>Cost:</strong> Higher — per-transaction + potential correspondent deductions</li>
+    </ul>
+    <h3>ACH (Automated Clearing House)</h3>
+    <p>A batch electronic payment system for domestic, lower-value, recurring transfers. Designed for volume and cost efficiency — not speed. Processes thousands of payments in scheduled batches.</p>
+    <ul>
+      <li><strong>Speed:</strong> Next day (standard) or same day (Same-Day ACH in US)</li>
+      <li><strong>Best for:</strong> Payroll, direct debits, recurring supplier payments</li>
+      <li><strong>Cost:</strong> Very low — designed for high-volume use</li>
+      <li><strong>Limitation:</strong> Primarily domestic use; not suitable for cross-border</li>
+    </ul>
+    <h3>Real-Time Payments (RTP)</h3>
+    <p>24/7/365 instant payment rails that process individual payments in seconds. Growing corporate adoption alongside traditional consumer use.</p>
+    <ul>
+      <li><strong>Global examples:</strong> UPI (India), Faster Payments (UK), FedNow &amp; RTP (US), PayNow (Singapore), PIX (Brazil)</li>
+      <li><strong>Speed:</strong> Seconds — immediate credit confirmation</li>
+      <li><strong>Best for:</strong> Urgent payments, 24/7 availability, emergency disbursements</li>
+      <li><strong>Limitation:</strong> Per-transaction value caps in most schemes</li>
+    </ul>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Method</th><th>Speed</th><th>Cost</th><th>Best For</th><th>Cross-Border?</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Wire Transfer</strong></td><td>Hours – 2 days</td><td>High</td><td>Large, urgent, international</td><td>Yes — primary method</td></tr>
+          <tr><td><strong>ACH</strong></td><td>Next day / same day</td><td>Very low</td><td>Payroll, bulk, recurring</td><td>Limited/domestic</td></tr>
+          <tr><td><strong>Real-Time Payments</strong></td><td>Seconds</td><td>Low–medium</td><td>Urgent, 24/7, instant need</td><td>Emerging (cross-border RTP developing)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="apply-activity">
+      <div class="apply-activity-header">🎯 Application Activities — Bloom's Levels 3 & 5</div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#4ade80;">Apply (Level 3)</div><p>Your client is a large retail chain. They need to: (1) pay 15,000 employees monthly, (2) urgently wire $2M to a US supplier by end of today, (3) receive instant payment confirmation from their online shoppers. Recommend the correct payment method for each and justify your choice.</p></div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#f87171;">Evaluate (Level 5)</div><p>A fintech competitor is offering corporates "real-time cross-border payments." Evaluate the claim. What are the technical and regulatory barriers that make true real-time cross-border payments difficult today? Under what conditions is this claim legitimate?</p></div>
+    </div>
+    <div class="learning-transfer">
+      <div class="lt-header">70 · 20 · 10 — Learning Transfer Plan</div>
+      <div class="lt-grid">
+        <div class="lt-item"><div class="lt-pct">70%</div><div class="lt-type">On the Job</div><div class="lt-desc">Review your client's current payment method mix. Are they using the most cost-effective method for each payment type? Identify one opportunity to optimise.</div></div>
+        <div class="lt-item"><div class="lt-pct">20%</div><div class="lt-type">Social</div><div class="lt-desc">Discuss with your product team: "Which of our clients would benefit from migrating recurring payments from wire to ACH?" Understand the cost saving potential.</div></div>
+        <div class="lt-item"><div class="lt-pct">10%</div><div class="lt-type">Formal</div><div class="lt-desc">Complete the Apply activity above without looking at your notes.</div></div>
+      </div>
+    </div>
+    <div class="module-summary">
+      <div class="summary-label">Module Summary</div>
+      <div class="summary-points">
+        <span class="summary-point">Wire = high value, cross-border, urgent</span>
+        <span class="summary-point">ACH = low cost, batch, domestic — payroll and recurring</span>
+        <span class="summary-point">RTP = instant, 24/7, growing corporate adoption</span>
+        <span class="summary-point">Method selection = function of value, urgency, geography, and cost</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 8 -->
+<div class="module" id="m8">
+  <div class="module-header">
+    <div class="module-num-badge">8</div>
+    <div class="module-title-group">
+      <div class="module-tag-row"><span class="module-tag">Module 08 · Infrastructure</span><span class="bloom-badge bloom-understand">🧠 Understand</span></div>
+      <h2>End-to-End Payment Lifecycle</h2>
+    </div>
+  </div>
+  <div class="module-body">
+    <div class="learning-objectives">
+      <div class="lo-label">Learning Objectives</div>
+      <ul class="lo-list">
+        <li>You will be able to <span class="bloom-verb">sequence</span> all eight stages of the payment lifecycle in correct order</li>
+        <li>You will be able to <span class="bloom-verb">explain</span> what happens at each stage and who is responsible</li>
+        <li>You will be able to <span class="bloom-verb">identify</span> the most likely failure point for a given payment problem</li>
+      </ul>
+    </div>
+    <div class="lifecycle">
+      <div class="lifecycle-step">
+        <div class="lifecycle-dot">1</div>
+        <div class="lifecycle-content">
+          <h4>Initiation</h4>
+          <p>Customer submits instruction via portal, API, SFTP batch, or branch. Payment captured in raw form and queued for processing.</p>
+        </div>
+      </div>
+      <div class="lifecycle-step">
+        <div class="lifecycle-dot">2</div>
+        <div class="lifecycle-content">
+          <h4>Validation</h4>
+          <p>System checks: mandatory fields complete, authorisation confirmed, balance sufficient, no duplicate detected. Any failure → exception queue.</p>
+        </div>
+      </div>
+      <div class="lifecycle-step">
+        <div class="lifecycle-dot">3</div>
+        <div class="lifecycle-content">
+          <h4>Enrichment</h4>
+          <p>Additional routing data appended: BIC lookup, correspondent details, regulatory purpose codes, FX conversion rate if applicable.</p>
+        </div>
+      </div>
+      <div class="lifecycle-step">
+        <div class="lifecycle-dot">4</div>
+        <div class="lifecycle-content">
+          <h4>Sanctions &amp; Compliance Screening</h4>
+          <p>All parties screened against OFAC, UN, EU, and internal lists. A hit suspends the payment for manual compliance review.</p>
+        </div>
+      </div>
+      <div class="lifecycle-step">
+        <div class="lifecycle-dot">5</div>
+        <div class="lifecycle-content">
+          <h4>Routing</h4>
+          <p>Payment engine selects optimal correspondent and network. Considers: currency, corridor, correspondent cut-offs, cost, and client instruction (SHA/OUR/BEN charge codes).</p>
+        </div>
+      </div>
+      <div class="lifecycle-step">
+        <div class="lifecycle-dot">6</div>
+        <div class="lifecycle-content">
+          <h4>Clearing</h4>
+          <p>Banks exchange obligations. Entitlements calculated and agreed. No money moved yet — clearing is the agreement to settle.</p>
+        </div>
+      </div>
+      <div class="lifecycle-step">
+        <div class="lifecycle-dot">7</div>
+        <div class="lifecycle-content">
+          <h4>Settlement</h4>
+          <p>Actual, final, irrevocable movement of funds between bank accounts (typically at central bank level). Beneficiary bank credits the receiver.</p>
+        </div>
+      </div>
+      <div class="lifecycle-step">
+        <div class="lifecycle-dot">8</div>
+        <div class="lifecycle-content">
+          <h4>Reconciliation</h4>
+          <p>Internal records matched against external confirmations (MT940 statements, SWIFT gpi updates). Breaks investigated and resolved.</p>
+        </div>
+      </div>
+    </div>
+    <div class="insight-box">
+      <div class="box-icon">📦</div>
+      <div class="box-content">
+        <div class="box-label">Gagné Event in Action: Analogy for Retention</div>
+        <p>The payment lifecycle is like a courier delivery: <strong>Book</strong> (initiation) → <strong>Verify address</strong> (validation) → <strong>Add route labels</strong> (enrichment) → <strong>Security check</strong> (screening) → <strong>Choose fastest network</strong> (routing) → <strong>Sorting hub logs parcel</strong> (clearing) → <strong>Delivered to door</strong> (settlement) → <strong>Sender confirms receipt</strong> (reconciliation).</p>
+      </div>
+    </div>
+    <div class="apply-activity">
+      <div class="apply-activity-header">🎯 Application Activities — Bloom's Levels 3 & 4</div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#4ade80;">Apply (Level 3)</div><p>A client says "I submitted my payment three hours ago and it still hasn't arrived." Walk through each of the eight lifecycle stages and identify at which stage(s) a three-hour delay is most plausibly occurring. What questions would you ask to narrow it down?</p></div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#fb923c;">Analyse (Level 4)</div><p>Analyse why screening (Stage 4) now sits between enrichment and routing in the modern payment hub — rather than at the end of the lifecycle as it was in older systems. What changed, and why does sequence placement matter for STP rates?</p></div>
+    </div>
+    <div class="learning-transfer">
+      <div class="lt-header">70 · 20 · 10 — Learning Transfer Plan</div>
+      <div class="lt-grid">
+        <div class="lt-item"><div class="lt-pct">70%</div><div class="lt-type">On the Job</div><div class="lt-desc">Track a real payment through your system from submission to settlement. Note timestamps at each stage. Identify which stages take longest and why.</div></div>
+        <div class="lt-item"><div class="lt-pct">20%</div><div class="lt-type">Social</div><div class="lt-desc">Spend 30 minutes with your payments operations team during peak hours. Observe which lifecycle stage generates the most exceptions that day.</div></div>
+        <div class="lt-item"><div class="lt-pct">10%</div><div class="lt-type">Formal</div><div class="lt-desc">Write the eight stages from memory on paper without consulting this handbook.</div></div>
+      </div>
+    </div>
+    <div class="module-summary">
+      <div class="summary-label">Module Summary</div>
+      <div class="summary-points">
+        <span class="summary-point">8 stages: Initiation → Validation → Enrichment → Screening → Routing → Clearing → Settlement → Reconciliation</span>
+        <span class="summary-point">Each stage = distinct responsibility and potential failure point</span>
+        <span class="summary-point">Screening now sits before routing — a design choice for STP optimisation</span>
+        <span class="summary-point">Settlement = final and irrevocable movement of funds</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULES 9–29: concise with objectives, activities, and transfer -->
+
+<div class="module" id="m9">
+  <div class="module-header"><div class="module-num-badge">9</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 09 · Infrastructure</span><span class="bloom-badge bloom-analyze">🔶 Analyse</span></div><h2>Straight Through Processing (STP)</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">define</span> STP and <span class="bloom-verb">explain</span> its operational importance</li><li>You will be able to <span class="bloom-verb">analyse</span> the root causes of STP failures</li><li>You will be able to <span class="bloom-verb">evaluate</span> which STP improvement initiatives would deliver the greatest impact</li></ul></div>
+    <h3>What is STP?</h3>
+    <p>Straight Through Processing means a payment travels from initiation to settlement with zero manual intervention. Every validation check passes, every screening result is clear, routing is determined algorithmically, and funds settle automatically. STP rate is one of the most critical operational KPIs in a payments bank — directly impacting cost, speed, and client experience.</p>
+    <h3>Why STP Rate Matters</h3>
+    <div class="table-wrap"><table><thead><tr><th>Benefit</th><th>Operational Explanation</th><th>Business Impact</th></tr></thead><tbody><tr><td><strong>Lower cost</strong></td><td>Manual intervention requires skilled operations staff; automated processing costs a fraction</td><td>Improves cost-to-income ratio</td></tr><tr><td><strong>Faster processing</strong></td><td>Automated payments move in minutes; manual repairs can take hours or days</td><td>Clients receive funds faster</td></tr><tr><td><strong>Fewer errors</strong></td><td>Human repair introduces additional risk of mistakes</td><td>Reduces operational losses</td></tr><tr><td><strong>Scalability</strong></td><td>Payment volumes can grow without proportional headcount growth</td><td>Supports business growth profitably</td></tr></tbody></table></div>
+    <h3>Common Causes of STP Failure</h3>
+    <ul>
+      <li>Missing or incomplete beneficiary fields (no BIC, no full name, truncated address)</li>
+      <li>Sanctions hit on any payment party — triggers mandatory manual review</li>
+      <li>Invalid or misformatted account number / IBAN check digit failure</li>
+      <li>Legacy or non-standard message format (e.g. special characters, wrong encoding)</li>
+      <li>Unstructured free-text address that the system cannot parse</li>
+      <li>Duplicate payment alert — held for human confirmation</li>
+      <li>FX rate not available for the currency pair at time of processing</li>
+      <li>Transaction breaches single or daily limit — requires manual approval</li>
+    </ul>
+    <div class="insight-box"><div class="box-icon">✈️</div><div class="box-content"><div class="box-label">Trainer Analogy</div><p>STP is like an airport e-gate. When your passport is valid and biometrics match, you walk through in seconds. When there's a mismatch, you're redirected to a manual desk — slower, more expensive, less predictable. <strong>ISO 20022 is the digital passport upgrade</strong> that dramatically increases the number of payments that "match" and pass the gate without intervention.</p></div></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activities — Bloom's Levels 4 & 6</div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#fb923c;">Analyse (Level 4)</div><p>Your bank's STP rate dropped from 94% to 88% this month. Analyse the five most likely root causes. For each cause, identify what data would help you confirm or rule it out.</p></div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#c084fc;">Create (Level 6)</div><p>Design a 3-month STP improvement plan for a bank with a 78% STP rate. Include specific data quality improvements, process changes, and technology enhancements. Estimate the impact of each initiative.</p></div>
+    </div>
+    <div class="learning-transfer"><div class="lt-header">70 · 20 · 10 — Learning Transfer Plan</div><div class="lt-grid"><div class="lt-item"><div class="lt-pct">70%</div><div class="lt-type">On the Job</div><div class="lt-desc">Pull this week's exception report. Categorise exceptions by root cause. Which cause accounts for the highest volume? What can be fixed at source?</div></div><div class="lt-item"><div class="lt-pct">20%</div><div class="lt-type">Social</div><div class="lt-desc">Meet with a client whose payments frequently fall out of STP. Understand what they find difficult about providing complete payment data. What can the bank do to help?</div></div><div class="lt-item"><div class="lt-pct">10%</div><div class="lt-type">Formal</div><div class="lt-desc">List eight STP failure causes from memory and rank them by frequency in your experience.</div></div></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">STP = automated payment from initiation to settlement, no manual touch</span><span class="summary-point">High STP = lower cost, faster speed, better client experience</span><span class="summary-point">STP fails due to data quality, sanctions hits, format issues</span><span class="summary-point">ISO 20022 migration is the single most impactful STP improvement lever</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m10">
+  <div class="module-header"><div class="module-num-badge">10</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 10 · Infrastructure</span><span class="bloom-badge bloom-apply">✅ Apply</span></div><h2>Exception Handling</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">classify</span> the main types of payment exceptions and their root causes</li><li>You will be able to <span class="bloom-verb">apply</span> the exception workflow to a real scenario</li><li>You will be able to <span class="bloom-verb">evaluate</span> the risk of aged exceptions to the bank</li></ul></div>
+    <h3>What is an Exception?</h3>
+    <p>An exception occurs when a payment cannot be processed automatically and requires human attention. Exceptions are unavoidable — even banks with excellent data quality encounter them daily. What separates excellent operations from average is the speed and accuracy with which exceptions are diagnosed and resolved.</p>
+    <h3>Exception Types and Resolution</h3>
+    <div class="table-wrap"><table><thead><tr><th>Exception Type</th><th>Root Cause</th><th>Resolution Approach</th></tr></thead><tbody><tr><td><strong>Invalid Beneficiary</strong></td><td>Wrong IBAN, closed account, name mismatch</td><td>Contact originator for correct details; return if unresolvable</td></tr><tr><td><strong>Insufficient Funds</strong></td><td>Account balance insufficient at time of processing</td><td>Notify originator; hold until funded or cancel</td></tr><tr><td><strong>Duplicate Payment</strong></td><td>Same reference submitted twice</td><td>Confirm with client; cancel duplicate or process both if intentional</td></tr><tr><td><strong>Sanctions Hit</strong></td><td>Party matches restricted list</td><td>Compliance team reviews; block or release with documented justification</td></tr><tr><td><strong>Cut-off Missed</strong></td><td>Instruction arrived after system deadline</td><td>Queue for next cycle; inform client of revised value date</td></tr><tr><td><strong>Blocked Jurisdiction</strong></td><td>Destination under embargo</td><td>Block payment; refer to compliance; notify customer</td></tr><tr><td><strong>Unmatched Nostro Entry</strong></td><td>Funds received without matching instruction</td><td>SWIFT query; return or apply after identification</td></tr></tbody></table></div>
+    <h3>Exception Workflow</h3>
+    <div class="flow" style="flex-wrap:wrap;gap:6px;"><div class="flow-step">Exception Detected</div><div class="flow-arrow">→</div><div class="flow-step">Alert Generated</div><div class="flow-arrow">→</div><div class="flow-step">Assigned to Ops</div><div class="flow-arrow">→</div><div class="flow-step">Investigated</div><div class="flow-arrow">→</div><div class="flow-step">Repaired / Decision</div><div class="flow-arrow">→</div><div class="flow-step">Reprocessed or Returned</div><div class="flow-arrow">→</div><div class="flow-step">Client Notified</div></div>
+    <div class="warning-box" style="margin-top:14px;"><div class="box-icon">⚠️</div><div class="box-content"><div class="box-label">Aged Exceptions: A Hidden Risk</div><p>Exceptions unresolved beyond defined thresholds become <strong>"aged items"</strong>. These attract regulatory attention, may hide fraud or error, and create balance sheet risk if amounts are material. Banks track exception ageing daily with strict escalation protocols. An aged exception on a large payment is a board-level concern.</p></div></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activity — Bloom's Level 3</div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#4ade80;">Apply (Level 3)</div><p>You receive an exception alert: a $500,000 payment has been flagged as a duplicate. The client insists it is not a duplicate — they meant to send it twice. Walk through the exact steps you would take to resolve this. Who do you contact? What documentation do you require? What is your timeline?</p></div>
+    </div>
+    <div class="learning-transfer"><div class="lt-header">70 · 20 · 10 — Learning Transfer Plan</div><div class="lt-grid"><div class="lt-item"><div class="lt-pct">70%</div><div class="lt-type">On the Job</div><div class="lt-desc">Volunteer to sit with the exceptions team for one hour. Handle or shadow three exceptions through the full workflow. Note the root cause and resolution time for each.</div></div><div class="lt-item"><div class="lt-pct">20%</div><div class="lt-type">Social</div><div class="lt-desc">Ask an experienced ops analyst: "What is the most unusual exception you've ever had to resolve, and how did you handle it?" Learn from edge-case experience.</div></div><div class="lt-item"><div class="lt-pct">10%</div><div class="lt-type">Formal</div><div class="lt-desc">Memorise the seven exception types and their resolution approaches. Recite them without notes.</div></div></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">Exception = payment requiring manual human intervention</span><span class="summary-point">Seven common types: invalid beneficiary, insufficient funds, duplicate, sanctions, cut-off, jurisdiction, unmatched</span><span class="summary-point">Workflow: detect → investigate → repair → reprocess/return → notify</span><span class="summary-point">Aged exceptions create regulatory, reputational, and financial risk</span></div></div>
+  </div>
+</div>
+
+<!-- MODULES 11–29 condensed -->
+<div class="module" id="m11"><div class="module-header"><div class="module-num-badge">11</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 11 · Infrastructure</span><span class="bloom-badge bloom-apply">✅ Apply</span></div><h2>Cut-off Times</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">explain</span> why cut-off times exist at multiple levels of the payment chain</li><li>You will be able to <span class="bloom-verb">apply</span> cut-off time knowledge to advise clients on submission deadlines</li><li>You will be able to <span class="bloom-verb">assess</span> the consequences of missing a cut-off</li></ul></div>
+    <h3>Layers of Cut-off Times</h3>
+    <div class="table-wrap"><table><thead><tr><th>Layer</th><th>What It Is</th><th>Who Sets It</th></tr></thead><tbody><tr><td><strong>Client cut-off</strong></td><td>Deadline for clients to submit instructions to the bank</td><td>Bank's own policy (e.g. 3pm)</td></tr><tr><td><strong>Internal processing cut-off</strong></td><td>Deadline for internal enrichment, approval, and screening</td><td>Internal operations</td></tr><tr><td><strong>Clearing house cut-off</strong></td><td>Deadline for submission to the clearing system</td><td>Clearing house (e.g. CHIPS)</td></tr><tr><td><strong>Central bank settlement cut-off</strong></td><td>Final deadline for RTGS settlement</td><td>Central bank (Fed, ECB)</td></tr></tbody></table></div>
+    <h3>Consequences of Missing a Cut-off</h3>
+    <ul>
+      <li>Payment deferred to next processing cycle — could be next business day</li>
+      <li>FX rate booked for today may have expired — new (potentially worse) rate applies</li>
+      <li>Contractual late payment penalty for the client</li>
+      <li>Supplier's cash flow disrupted — relationship damage</li>
+      <li>Reputational damage to the bank if the client holds the bank responsible</li>
+    </ul>
+    <div class="example-box"><div class="box-icon">⏰</div><div class="box-content"><div class="box-label">Practical Example</div><p>An urgent USD payment requires same-day Fedwire settlement. The bank's USD correspondent cut-off is <strong>4:30pm EST</strong>. If the corporate submits at 4:45pm, the payment settles next business day — regardless of urgency. If the client booked FX at today's rate, they may now face a rate loss overnight. The bank must immediately notify the client and offer to rebook FX.</p></div></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activity — Bloom's Level 3</div><div class="apply-q"><div class="apply-q-level" style="color:#4ade80;">Apply (Level 3)</div><p>It is 2:45pm and a client calls to submit a $10M USD wire to New York. Your bank's USD cut-off is 3:00pm. The client also needs EUR converted for a payment to Frankfurt (cut-off 2:00pm). What do you tell the client about each payment? What actions do you take immediately?</p></div></div>
+    <div class="learning-transfer"><div class="lt-header">70 · 20 · 10 — Learning Transfer Plan</div><div class="lt-grid"><div class="lt-item"><div class="lt-pct">70%</div><div class="lt-type">On the Job</div><div class="lt-desc">Obtain your bank's cut-off schedule for the top 5 currencies and corridors your clients use. Memorise the three most critical cut-off times.</div></div><div class="lt-item"><div class="lt-pct">20%</div><div class="lt-type">Social</div><div class="lt-desc">Ask a client service colleague: "What is the most common cut-off-related complaint we get from clients?" Work together on a proactive communication solution.</div></div><div class="lt-item"><div class="lt-pct">10%</div><div class="lt-type">Formal</div><div class="lt-desc">Complete this module and draft a one-page "cut-off time guide" you could share with a client.</div></div></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">Cut-offs exist at client, internal, clearing house, and central bank levels</span><span class="summary-point">Missing cut-off = next cycle, FX exposure, penalties, reputational damage</span><span class="summary-point">Client must submit well before published cut-off to allow internal processing time</span><span class="summary-point">Always know the cut-offs for your key currency corridors</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m12"><div class="module-header"><div class="module-num-badge">12</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 12 · Operations</span><span class="bloom-badge bloom-understand">🧠 Understand</span></div><h2>Nostro &amp; Vostro Accounts</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">define</span> Nostro and Vostro from both perspectives</li><li>You will be able to <span class="bloom-verb">explain</span> how pre-positioned balances enable cross-border payment settlement</li><li>You will be able to <span class="bloom-verb">describe</span> why Nostro reconciliation is a critical daily control</li></ul></div>
+    <div class="definition-box"><div class="box-icon">📌</div><div class="box-content"><div class="box-label">The Fundamental Definitions</div><p><strong>Nostro</strong> (Latin: "ours") — our account held at another bank.<br/><strong>Vostro</strong> (Latin: "yours") — your account held with us.<br/>The same account is <em>simultaneously</em> Nostro to its owner and Vostro to its holder. It is a matter of perspective, not a different type of account.</p></div></div>
+    <h3>How Nostro Accounts Enable International Payments</h3>
+    <p>Indian Bank holds a USD account at US Bank (JPMorgan). Indian Bank calls this its <strong>USD Nostro</strong>. US Bank calls it Indian Bank's <strong>Vostro</strong>. When Indian Bank needs to send USD internationally, it instructs JPMorgan via SWIFT to debit the Nostro account and credit the beneficiary. The USD is already pre-positioned — no physical cross-border movement of currency required.</p>
+    <h3>Nostro Account Management Responsibilities</h3>
+    <ul>
+      <li>Maintain sufficient pre-positioned balances to fund outgoing payment obligations</li>
+      <li>Avoid excess idle balances (opportunity cost of uninvested cash)</li>
+      <li>Forecast intraday and end-of-day Nostro positions</li>
+      <li>Reconcile Nostro statements daily (or intraday) against internal records</li>
+      <li>Investigate and resolve all unmatched entries (breaks) promptly</li>
+      <li>Manage FX exposure on foreign currency Nostros</li>
+    </ul>
+    <div class="warning-box"><div class="box-icon">⚠️</div><div class="box-content"><div class="box-label">Risk Alert: The Unreconciled Break</div><p>A discrepancy between your Nostro records and the correspondent bank's statement — called a <strong>Nostro break</strong> — can hide fraud, an operational error, a duplicate, or a lost payment. Every break must be investigated the same day it is identified. Banks have been fined for allowing Nostro breaks to age unresolved.</p></div></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activity — Bloom's Level 4</div><div class="apply-q"><div class="apply-q-level" style="color:#fb923c;">Analyse (Level 4)</div><p>Your bank holds Nostro accounts in USD, EUR, GBP, and JPY. This morning's reconciliation shows: USD Nostro has a $2M credit entry with no matching internal transaction. EUR Nostro shows a €500K debit that your systems record as €450K. What are the possible explanations for each break, and what steps would you take to investigate?</p></div></div>
+    <div class="learning-transfer"><div class="lt-header">70 · 20 · 10 — Learning Transfer Plan</div><div class="lt-grid"><div class="lt-item"><div class="lt-pct">70%</div><div class="lt-type">On the Job</div><div class="lt-desc">Ask to review this morning's Nostro reconciliation report for one currency. Identify any breaks. Follow at least one break through to resolution.</div></div><div class="lt-item"><div class="lt-pct">20%</div><div class="lt-type">Social</div><div class="lt-desc">Ask your treasury team: "How many Nostro accounts does our bank hold globally? Which one has the most active balance management?" Understand the scale.</div></div><div class="lt-item"><div class="lt-pct">10%</div><div class="lt-type">Formal</div><div class="lt-desc">Explain Nostro vs. Vostro to a colleague who has never heard the terms, using only the analogy of a foreign bank account.</div></div></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">Nostro = our account at another bank; Vostro = their account with us — same account, two perspectives</span><span class="summary-point">Pre-positioned Nostro balances enable cross-border settlement</span><span class="summary-point">Daily Nostro reconciliation is a mandatory, critical control</span><span class="summary-point">Unresolved Nostro breaks hide risk — must be investigated same day</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m13"><div class="module-header"><div class="module-num-badge">13</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 13 · Operations</span><span class="bloom-badge bloom-remember">🔘 Remember</span></div><h2>Messaging Standards: SWIFT MT</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">recall</span> the purpose of the most important SWIFT MT message types</li><li>You will be able to <span class="bloom-verb">explain</span> the difference between MT103 and MT202 COV</li><li>You will be able to <span class="bloom-verb">identify</span> which message type applies to a given payment scenario</li></ul></div>
+    <div class="table-wrap"><table><thead><tr><th>Message</th><th>Purpose</th><th>Who Sends</th><th>Key Fact</th></tr></thead><tbody><tr><td><strong>MT101</strong></td><td>Transfer request — corporate instructs bank to make payments</td><td>Corporate to Bank</td><td>Used for multi-bank, single instruction bulk payments</td></tr><tr><td><strong>MT103</strong></td><td>Single customer credit transfer — the primary payment message</td><td>Bank to Bank</td><td>The "payment certificate" — carries full beneficiary details</td></tr><tr><td><strong>MT103+</strong></td><td>Enhanced MT103 with STP-enabling fields</td><td>Bank to Bank</td><td>Reduces exceptions through richer structured data</td></tr><tr><td><strong>MT202</strong></td><td>General financial institution transfer — bank-to-bank cover</td><td>Bank to Bank</td><td>Reimburses correspondent for funding the customer payment</td></tr><tr><td><strong>MT202 COV</strong></td><td>Cover payment with full underlying customer details</td><td>Bank to Bank</td><td>Post-FATF requirement — prevents opaque correspondent payments</td></tr><tr><td><strong>MT199 / MT299</strong></td><td>Free-format investigation messages</td><td>Bank to Bank</td><td>Used for "where is my payment?" queries</td></tr><tr><td><strong>MT940 / MT950</strong></td><td>Account statement — end-of-day Nostro position</td><td>Bank to Bank</td><td>Primary input for Nostro reconciliation</td></tr></tbody></table></div>
+    <div class="example-box"><div class="box-icon">📄</div><div class="box-content"><div class="box-label">MT103 + MT202 COV: How They Work Together</div><p>Indian Bank sends MT103 to JPMorgan instructing it to credit €100K to Deutsche Bank. Simultaneously, Indian Bank sends MT202 COV authorising JPMorgan to debit Indian Bank's Nostro for €100K. The MT103 carries full beneficiary details; the MT202 COV moves the corresponding funds between banks. They are two parts of one transaction.</p></div></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activity — Bloom's Level 2</div><div class="apply-q"><div class="apply-q-level" style="color:#38bdf8;">Understand (Level 2)</div><p>A client asks: "I sent a $500,000 wire. My bank says they sent the MT103. The beneficiary bank says they received nothing. What happened?" Explain the possible gap between MT103 being sent and funds being received, and what message types would help investigate.</p></div></div>
+    <div class="learning-transfer"><div class="lt-header">70 · 20 · 10 — Learning Transfer Plan</div><div class="lt-grid"><div class="lt-item"><div class="lt-pct">70%</div><div class="lt-type">On the Job</div><div class="lt-desc">Ask operations to show you a redacted MT103 message. Identify the key fields: sender/receiver BIC, amount, beneficiary IBAN, value date, reference. Map them to their ISO 20022 equivalents.</div></div><div class="lt-item"><div class="lt-pct">20%</div><div class="lt-type">Social</div><div class="lt-desc">Ask a payments specialist: "What is the most common MT103 field error that causes STP to fail?" Use this to brief your clients.</div></div><div class="lt-item"><div class="lt-pct">10%</div><div class="lt-type">Formal</div><div class="lt-desc">From memory, list all seven MT message types and their purpose in one sentence each.</div></div></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">MT103 = primary customer credit transfer — carries full beneficiary details</span><span class="summary-point">MT202 COV = bank-to-bank cover with transparency requirements</span><span class="summary-point">MT199/MT299 = investigation messages</span><span class="summary-point">MT940 = Nostro statement for reconciliation</span><span class="summary-point">All MT messages being replaced by ISO 20022</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m14"><div class="module-header"><div class="module-num-badge">14</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 14 · Operations</span><span class="bloom-badge bloom-evaluate">🔴 Evaluate</span></div><h2>ISO 20022: The New Global Standard</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">explain</span> what ISO 20022 is and how it differs from legacy MT messaging</li><li>You will be able to <span class="bloom-verb">evaluate</span> the business benefits of ISO 20022 migration beyond compliance</li><li>You will be able to <span class="bloom-verb">justify</span> why ISO 20022 is a strategic opportunity, not just a technical upgrade</li></ul></div>
+    <h3>What is ISO 20022?</h3>
+    <p>ISO 20022 is an international standard for financial messaging using a rich, structured XML-based format. Unlike SWIFT MT messages (which use condensed, field-coded structure with significant data constraints), ISO 20022 messages carry vastly more structured information about a payment — each field machine-readable, parseable, and useful for automation.</p>
+    <div class="table-wrap"><table><thead><tr><th>ISO 20022 Message</th><th>Replaces</th><th>Purpose</th></tr></thead><tbody><tr><td><strong>pain.001</strong></td><td>MT101</td><td>Customer credit transfer initiation</td></tr><tr><td><strong>pain.002</strong></td><td>—</td><td>Payment status report / rejection notification</td></tr><tr><td><strong>camt.053</strong></td><td>MT940/MT950</td><td>Bank-to-customer account statement</td></tr><tr><td><strong>pacs.008</strong></td><td>MT103</td><td>Financial institution customer credit transfer</td></tr><tr><td><strong>pacs.009</strong></td><td>MT202/MT202 COV</td><td>Financial institution credit transfer</td></tr></tbody></table></div>
+    <h3>Why It's Strategically Important</h3>
+    <ul>
+      <li><strong>Richer data:</strong> Full legal name, structured address, LEI, purpose code — not free-text abbreviations</li>
+      <li><strong>Better sanctions screening:</strong> Structured names reduce false positives; matches are more accurate</li>
+      <li><strong>Higher STP rates:</strong> Machine-parseable data eliminates most manual repair causes</li>
+      <li><strong>Improved reconciliation:</strong> End-to-end reference fields enable automatic matching</li>
+      <li><strong>Regulatory support:</strong> Structured purpose codes simplify reporting</li>
+    </ul>
+    <div class="insight-box"><div class="box-icon">🌍</div><div class="box-content"><div class="box-label">Industry Context</div><p>SWIFT's coexistence period for MT and ISO 20022 ends. ISO 20022 is now mandatory on the SWIFT network. Banks not ready face interoperability issues and competitive disadvantage. Banks that treat it as a <strong>business opportunity</strong> — not just a compliance deadline — will use the richer data to improve client services, build better analytics, and reduce operational cost.</p></div></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activities — Bloom's Levels 5 & 6</div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#f87171;">Evaluate (Level 5)</div><p>Your CFO says: "ISO 20022 is just an IT plumbing project — put it in the technology budget." Evaluate this framing. Build a business case (in five bullet points) for why ISO 20022 is a business initiative, not just a technical one, and which business metrics it will improve.</p></div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#c084fc;">Create (Level 6)</div><p>Design a one-page internal briefing document for your Relationship Managers explaining ISO 20022 and why their clients should care. Use non-technical language. Focus on client benefits.</p></div>
+    </div>
+    <div class="learning-transfer"><div class="lt-header">70 · 20 · 10 — Learning Transfer Plan</div><div class="lt-grid"><div class="lt-item"><div class="lt-pct">70%</div><div class="lt-type">On the Job</div><div class="lt-desc">Ask your ISO 20022 programme team: "What percentage of our payment volume is currently processed in ISO 20022 format?" Understand where you are in the migration journey.</div></div><div class="lt-item"><div class="lt-pct">20%</div><div class="lt-type">Social</div><div class="lt-desc">Ask a corporate client: "Have you heard about ISO 20022? How are you preparing?" Use the conversation to position the bank as a knowledgeable partner.</div></div><div class="lt-item"><div class="lt-pct">10%</div><div class="lt-type">Formal</div><div class="lt-desc">Complete the Create activity above. Share the RM briefing document with your team leader for feedback.</div></div></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">ISO 20022 = XML-based, richly structured financial messaging standard</span><span class="summary-point">Replaces all legacy MT messages globally</span><span class="summary-point">Benefits: better data, higher STP, improved screening, easier reconciliation</span><span class="summary-point">Strategic opportunity — not just a compliance project</span></div></div>
+  </div>
+</div>
+
+<!-- MODULES 15–29: concise format maintained -->
+
+<div class="module" id="m15"><div class="module-header"><div class="module-num-badge">15</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 15 · Operations</span><span class="bloom-badge bloom-understand">🧠 Understand</span></div><h2>Payment Hub Architecture</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">describe</span> the core layers of a payment hub</li><li>You will be able to <span class="bloom-verb">explain</span> why centralisation on a single hub is strategically beneficial</li><li>You will be able to <span class="bloom-verb">identify</span> where in the hub architecture common failures occur</li></ul></div>
+    <p>A payment hub is a centralised technology platform that manages end-to-end processing of all payment types. Rather than siloed systems for each rail, a hub applies consistent validation, screening, routing, and reporting logic across all channels.</p>
+    <div class="flow" style="flex-wrap:wrap;gap:5px;margin:14px 0;"><div class="flow-step">Channels</div><div class="flow-arrow">→</div><div class="flow-step">Orchestration</div><div class="flow-arrow">→</div><div class="flow-step">Validation</div><div class="flow-arrow">→</div><div class="flow-step">Screening</div><div class="flow-arrow">→</div><div class="flow-step">Routing</div><div class="flow-arrow">→</div><div class="flow-step">Core Ledger</div><div class="flow-arrow">→</div><div class="flow-step">Clearing</div><div class="flow-arrow">→</div><div class="flow-step">Settlement</div><div class="flow-arrow">→</div><div class="flow-step">Reporting</div></div>
+    <div class="table-wrap"><table><thead><tr><th>Layer</th><th>Function</th><th>Technology Examples</th></tr></thead><tbody><tr><td><strong>Channels</strong></td><td>Entry points: corporate portal, API, SFTP, SWIFT, mobile</td><td>Custom portals, SWIFT Alliance</td></tr><tr><td><strong>Orchestration</strong></td><td>Manages workflow state and coordinates processing sequence</td><td>Temenos, Finastra, Volante</td></tr><tr><td><strong>Validation Engine</strong></td><td>Checks data completeness, format, and business rules</td><td>Rule engines, Veripark</td></tr><tr><td><strong>Screening</strong></td><td>Sanctions, AML, and PEP screening</td><td>Firco, Actimize, Oracle FCCM</td></tr><tr><td><strong>Routing Engine</strong></td><td>Selects optimal correspondent and network</td><td>Rule-based or AI-driven</td></tr><tr><td><strong>Core Ledger</strong></td><td>Accounting system — records all debits and credits</td><td>Temenos T24, Finacle, Flexcube</td></tr><tr><td><strong>Reporting</strong></td><td>Regulatory reporting, MIS, client notifications</td><td>BI tools, custom reporting</td></tr></tbody></table></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activity — Bloom's Level 4</div><div class="apply-q"><div class="apply-q-level" style="color:#fb923c;">Analyse (Level 4)</div><p>A bank currently runs three separate systems: one for SWIFT payments, one for domestic ACH, and one for real-time payments. Each has its own validation and screening logic. Analyse the problems this creates for compliance, operations, and client experience. How would a single payment hub solve them?</p></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">Payment hub = centralised platform for all payment types</span><span class="summary-point">Key layers: channels → validation → screening → routing → ledger → settlement → reporting</span><span class="summary-point">Centralisation = consistent controls, lower cost, better data, easier migration</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m16"><div class="module-header"><div class="module-num-badge">16</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 16 · Operations</span><span class="bloom-badge bloom-analyze">🔶 Analyse</span></div><h2>Batch vs. Real-Time Processing</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">compare</span> batch and real-time processing on multiple dimensions</li><li>You will be able to <span class="bloom-verb">recommend</span> the appropriate processing mode for a given payment type</li><li>You will be able to <span class="bloom-verb">analyse</span> the liquidity implications of each model</li></ul></div>
+    <div class="compare-grid">
+      <div class="compare-card"><h4>📦 Batch Processing</h4><p>Payments accumulated and processed in scheduled groups at defined intervals.</p><p><strong>Advantages:</strong></p><ul><li>Lower cost per transaction</li><li>Efficient system resource use</li><li>Predictable settlement times</li></ul><p><strong>Limitations:</strong></p><ul><li>Funds not available until batch settles</li><li>Errors can affect whole batch</li><li>Not available 24/7</li></ul></div>
+      <div class="compare-card"><h4>⚡ Real-Time Processing</h4><p>Each payment processed individually and immediately, 24/7/365.</p><p><strong>Advantages:</strong></p><ul><li>Funds available within seconds</li><li>Errors isolated to individual payments</li><li>Always on — no batch windows</li></ul><p><strong>Limitations:</strong></p><ul><li>Higher cost per transaction</li><li>Higher intraday liquidity demand</li><li>More complex to manage at scale</li></ul></div>
+    </div>
+    <div class="insight-box"><div class="box-icon">💡</div><div class="box-content"><div class="box-label">The Hybrid Model</div><p>Most banks now use a hybrid model — routing high-value and urgent payments to real-time rails, and bulk/routine payments to batch processing. The payment hub applies this routing automatically based on payment classification. The skill is in setting the right routing rules for your client base.</p></div></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activity — Bloom's Level 5</div><div class="apply-q"><div class="apply-q-level" style="color:#f87171;">Evaluate (Level 5)</div><p>A corporate treasury argues: "We want all payments — payroll, supplier invoices, everything — processed in real time." Evaluate this request. What are the operational, cost, and liquidity implications? What would you recommend, and why?</p></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">Batch = grouped, scheduled, low cost — best for payroll and mass payments</span><span class="summary-point">Real-time = instant, 24/7, higher cost — best for urgent payments</span><span class="summary-point">Hybrid routing is optimal — classification drives mode selection</span><span class="summary-point">Real-time demands greater intraday liquidity management</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m17"><div class="module-header"><div class="module-num-badge">17</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 17 · Operations</span><span class="bloom-badge bloom-understand">🧠 Understand</span></div><h2>High Availability &amp; Resiliency</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">explain</span> why payment system availability is non-negotiable</li><li>You will be able to <span class="bloom-verb">identify</span> the key components of a resilient payments infrastructure</li><li>You will be able to <span class="bloom-verb">define</span> RTO, RPO, MTTR, and explain their importance</li></ul></div>
+    <p>Payment systems are classified as critical financial infrastructure. Even minutes of downtime can cause settlement failures, liquidity crunches, and regulatory censure. Regulators require banks to demonstrate operational resilience — the ability to prevent, respond to, and recover from operational disruptions.</p>
+    <div class="table-wrap"><table><thead><tr><th>Component</th><th>Description</th><th>Why It Matters</th></tr></thead><tbody><tr><td><strong>Redundant servers</strong></td><td>Primary and secondary servers — automatic failover</td><td>No single point of failure</td></tr><tr><td><strong>Disaster Recovery site</strong></td><td>A standby environment in a different geographic location</td><td>Survives data centre outage</td></tr><tr><td><strong>Active-active architecture</strong></td><td>Both sites process simultaneously — zero downtime on failover</td><td>Seamless for clients</td></tr><tr><td><strong>24/7 monitoring</strong></td><td>Automated health monitoring with escalation protocols</td><td>Issues detected before client impact</td></tr><tr><td><strong>RTO</strong></td><td>Recovery Time Objective — maximum acceptable downtime</td><td>Defines recovery speed requirement</td></tr><tr><td><strong>RPO</strong></td><td>Recovery Point Objective — maximum acceptable data loss (time)</td><td>Defines data backup frequency</td></tr></tbody></table></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activity — Bloom's Level 3</div><div class="apply-q"><div class="apply-q-level" style="color:#4ade80;">Apply (Level 3)</div><p>Your bank's payment hub goes offline at 10:45am on a Tuesday. The operations team estimates a 2-hour recovery time. List the immediate steps you would take: (1) who do you notify internally, (2) what do you tell clients waiting for payments, (3) what manual processes can bridge the gap?</p></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">Payment systems = critical infrastructure; downtime = regulatory and reputational risk</span><span class="summary-point">Resiliency requires: redundancy, DR sites, monitoring, cyber controls, BCPs</span><span class="summary-point">RTO = maximum acceptable downtime; RPO = maximum acceptable data loss</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m18"><div class="module-header"><div class="module-num-badge">18</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 18 · Operations</span><span class="bloom-badge bloom-analyze">🔶 Analyse</span></div><h2>Clearing &amp; Settlement</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">distinguish</span> between clearing and settlement precisely</li><li>You will be able to <span class="bloom-verb">compare</span> RTGS and DNS on liquidity, risk, and use-case dimensions</li><li>You will be able to <span class="bloom-verb">analyse</span> which settlement model is appropriate for different payment types</li></ul></div>
+    <div class="terms-grid">
+      <div class="term-card"><div class="term-name">Clearing</div><div class="term-def">Banks communicate and agree on payment obligations. Entitlements are calculated. No money has moved yet — clearing is the agreement to settle.</div></div>
+      <div class="term-card"><div class="term-name">Settlement</div><div class="term-def">Actual, final, irrevocable transfer of funds between banks (through central bank accounts). Settlement discharges the obligation agreed at clearing.</div></div>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>Feature</th><th>RTGS</th><th>Deferred Net Settlement (DNS)</th></tr></thead><tbody><tr><td>Settlement timing</td><td>Continuous, real-time</td><td>End of defined cycle</td></tr><tr><td>Finality</td><td>Immediate and irrevocable</td><td>Only at end of cycle</td></tr><tr><td>Liquidity requirement</td><td>High — full gross amount needed immediately</td><td>Lower — only net positions settle</td></tr><tr><td>Settlement risk</td><td>Minimal — no accumulation</td><td>Higher — risk accumulates intraday</td></tr><tr><td>Best for</td><td>Large-value, time-critical payments</td><td>High-volume, lower-value payments</td></tr><tr><td>Examples</td><td>Fedwire (USD), TARGET2 (EUR), CHAPS (GBP)</td><td>CHIPS (USD), Bacs (GBP), most ACH systems</td></tr></tbody></table></div>
+    <div class="insight-box"><div class="box-icon">🍺</div><div class="box-content"><div class="box-label">Trainer Analogy</div><p>RTGS is like paying for every coffee individually as you go through the day — immediate and final each time. DNS is like running a bar tab — everything accumulates and is netted at the end of the evening. Both work, but the bar tab (DNS) requires less cash flow throughout the day, while paying individually (RTGS) means no risk of the tab being called in unexpectedly.</p></div></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activity — Bloom's Level 4</div><div class="apply-q"><div class="apply-q-level" style="color:#fb923c;">Analyse (Level 4)</div><p>Bank A processes $2 billion in gross payments per day. Under RTGS, it needs to pre-fund all $2 billion intraday. Under DNS, its net position at end of day is $200 million. Analyse the liquidity management implications of each model. What are the hidden costs and risks of DNS that the raw numbers don't show?</p></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">Clearing = agreement on obligations; Settlement = actual movement of funds</span><span class="summary-point">RTGS = individual, real-time, immediate finality, high liquidity requirement</span><span class="summary-point">DNS = accumulated, netted, lower liquidity requirement, higher settlement risk</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m19"><div class="module-header"><div class="module-num-badge">19</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 19 · Operations</span><span class="bloom-badge bloom-analyze">🔶 Analyse</span></div><h2>Intraday Liquidity Management</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">explain</span> why intraday liquidity management is critical in RTGS environments</li><li>You will be able to <span class="bloom-verb">identify</span> the techniques banks use to manage intraday liquidity</li><li>You will be able to <span class="bloom-verb">analyse</span> the regulatory framework governing intraday liquidity (BCBS 248)</li></ul></div>
+    <p>Intraday liquidity refers to funds needed during the business day to settle payment obligations as they fall due. In RTGS environments, banks must fund each payment individually — they cannot wait until end of day to net positions. The timing mismatch between outgoing and incoming payments creates intraday liquidity risk.</p>
+    <div class="table-wrap"><table><thead><tr><th>Technique</th><th>How It Works</th><th>Best For</th></tr></thead><tbody><tr><td><strong>Queue prioritisation</strong></td><td>High-value/time-critical payments processed first; others queued</td><td>Managing peak liquidity demands</td></tr><tr><td><strong>Central bank intraday credit</strong></td><td>Borrow from central bank against eligible collateral</td><td>Bridging morning outflow before inflows arrive</td></tr><tr><td><strong>Intraday cash flow forecasting</strong></td><td>Treasury models predict incoming/outgoing flows by time</td><td>Proactive positioning and early warning</td></tr><tr><td><strong>Payment queue optimisation</strong></td><td>Algorithms delay non-urgent outflows until inflows arrive</td><td>Reducing peak liquidity requirement</td></tr><tr><td><strong>Liquidity pooling</strong></td><td>Multiple accounts or subsidiaries share a single liquidity pool</td><td>Group-wide liquidity efficiency</td></tr></tbody></table></div>
+    <div class="warning-box"><div class="box-icon">⚠️</div><div class="box-content"><div class="box-label">BCBS 248 — Regulatory Framework</div><p>The Basel Committee on Banking Supervision requires banks under BCBS 248 to monitor, measure, and report intraday liquidity positions in near-real-time. Banks must be able to demonstrate that they can meet intraday obligations under both normal and stressed conditions. Failure to manage intraday liquidity can result in settlement failures, regulatory penalties, and systemic risk.</p></div></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activity — Bloom's Level 4</div><div class="apply-q"><div class="apply-q-level" style="color:#fb923c;">Analyse (Level 4)</div><p>It is 9am. Your bank must make $500M in RTGS payments before noon. Your expected inflows are $450M, but most arrive after 1pm. Analyse the intraday liquidity gap. What three techniques from the table above would you deploy, in what order, and why?</p></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">Intraday liquidity = funds needed during the day to settle individual payments</span><span class="summary-point">Techniques: queue prioritisation, central bank credit, forecasting, pooling</span><span class="summary-point">BCBS 248 mandates real-time monitoring and reporting of intraday positions</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m20"><div class="module-header"><div class="module-num-badge">20</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 20 · Compliance & Risk</span><span class="bloom-badge bloom-apply">✅ Apply</span></div><h2>Compliance &amp; Regulatory Framework</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">identify</span> the five core compliance obligations in payments</li><li>You will be able to <span class="bloom-verb">apply</span> compliance knowledge to identify what controls apply to a given payment</li><li>You will be able to <span class="bloom-verb">evaluate</span> the consequences of compliance failure with real-world context</li></ul></div>
+    <div class="table-wrap"><table><thead><tr><th>Framework</th><th>What It Requires</th><th>Real Consequence of Failure</th></tr></thead><tbody><tr><td><strong>AML</strong></td><td>Detect, investigate, and report suspicious transactions</td><td>HSBC: $1.9bn fine (2012). Criminal prosecution of staff.</td></tr><tr><td><strong>KYC</strong></td><td>Verify client identity and assess risk profile before onboarding</td><td>Loss of banking licence. Regulatory censure.</td></tr><tr><td><strong>Sanctions</strong></td><td>Screen all parties against OFAC, UN, EU restricted lists</td><td>BNP Paribas: $8.9bn fine (2014). USD access suspended.</td></tr><tr><td><strong>OFAC</strong></td><td>US Treasury sanctions authority — applies to all USD transactions globally</td><td>Even non-US banks lose USD access for violations</td></tr><tr><td><strong>PEP Screening</strong></td><td>Enhanced due diligence on politically exposed persons</td><td>Enables bribery/corruption — criminal liability</td></tr><tr><td><strong>Regulatory Reporting</strong></td><td>Submit SARs, large transaction reports, regulatory returns</td><td>Fines for late or missing reports</td></tr></tbody></table></div>
+    <div class="warning-box"><div class="box-icon">⚠️</div><div class="box-content"><div class="box-label">Real-World Stakes</div><p>Global banks have paid <strong>tens of billions</strong> in fines for AML and sanctions violations. BNP Paribas ($8.9bn), HSBC ($1.9bn), Standard Chartered ($1.1bn). These are not hypothetical risks. Compliance in payments is a matter of institutional survival — not a box-ticking exercise.</p></div></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activity — Bloom's Level 3</div><div class="apply-q"><div class="apply-q-level" style="color:#4ade80;">Apply (Level 3)</div><p>A client asks you to process a $2M USD payment to a trading company in the UAE. The company name is similar to one on the OFAC SDN list but not an exact match. Walk through the compliance controls that would activate and the steps you would take before processing or rejecting the payment.</p></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">Five core compliance areas: AML, KYC, sanctions, OFAC, regulatory reporting</span><span class="summary-point">OFAC applies to all USD transactions globally — not just US banks</span><span class="summary-point">Non-compliance = fines, criminal prosecution, reputational destruction</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m21"><div class="module-header"><div class="module-num-badge">21</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 21 · Compliance & Risk</span><span class="bloom-badge bloom-understand">🧠 Understand</span></div><h2>Compliance Screening Tools</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">explain</span> why automated screening tools are essential at payment scale</li><li>You will be able to <span class="bloom-verb">describe</span> the end-to-end screening workflow including fuzzy matching and case management</li><li>You will be able to <span class="bloom-verb">distinguish</span> between a true match and a false positive, and explain the audit requirements</li></ul></div>
+    <div class="compare-grid">
+      <div class="compare-card"><h4>Firco (SWIFT subsidiary)</h4><p>Real-time sanctions screening integrated into the payment flow. Checks against OFAC, UN, EU, and custom lists. Highly configurable with fuzzy matching (catches name variations and deliberate misspellings). Industry standard for high-volume banks.</p></div>
+      <div class="compare-card"><h4>Actimize (NICE Systems)</h4><p>Broader compliance platform: sanctions screening + AML transaction monitoring + fraud detection + case management. Uses ML to reduce false positives. Preferred for integrated compliance workflows that span screening and investigation.</p></div>
+    </div>
+    <h3>Screening Workflow</h3>
+    <div class="lifecycle">
+      <div class="lifecycle-step"><div class="lifecycle-dot">1</div><div class="lifecycle-content"><h4>Name Extraction</h4><p>All party names extracted from payment message — payer, payee, intermediaries.</p></div></div>
+      <div class="lifecycle-step"><div class="lifecycle-dot">2</div><div class="lifecycle-content"><h4>List Matching</h4><p>Exact and fuzzy matching against OFAC, UN, EU, and internal lists. Fuzzy matching catches "Al-Qaeda" / "Al Qaida" variations.</p></div></div>
+      <div class="lifecycle-step"><div class="lifecycle-dot">3</div><div class="lifecycle-content"><h4>Alert Generation</h4><p>Near-match above confidence threshold = payment held; alert sent to compliance team for review.</p></div></div>
+      <div class="lifecycle-step"><div class="lifecycle-dot">4</div><div class="lifecycle-content"><h4>Case Management</h4><p>Compliance analyst reviews: true match (block) or false positive (release). Decision documented with full justification.</p></div></div>
+      <div class="lifecycle-step"><div class="lifecycle-dot">5</div><div class="lifecycle-content"><h4>Audit Trail</h4><p>All decisions logged with timestamp, analyst ID, and documented justification. Defensible for regulatory inspection.</p></div></div>
+    </div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activity — Bloom's Level 4</div><div class="apply-q"><div class="apply-q-level" style="color:#fb923c;">Analyse (Level 4)</div><p>Your screening tool generates 500 alerts per day, of which 490 are false positives. Analyse the operational and risk trade-offs of: (a) raising the matching threshold to reduce false positives, (b) adding more analysts to review all alerts, (c) implementing ML-based alert scoring. What are the risks of each approach?</p></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">Automated screening = mandatory at payment scale</span><span class="summary-point">Firco and Actimize = leading industry tools</span><span class="summary-point">Fuzzy matching catches deliberate name obfuscation</span><span class="summary-point">Full audit trail required for every compliance decision</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m22"><div class="module-header"><div class="module-num-badge">22</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 22 · Compliance & Risk</span><span class="bloom-badge bloom-apply">✅ Apply</span></div><h2>Fraud Detection in Payments</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">identify</span> the main types of payment fraud and how they are perpetrated</li><li>You will be able to <span class="bloom-verb">apply</span> fraud detection signals to a real-world scenario</li><li>You will be able to <span class="bloom-verb">evaluate</span> what controls would prevent a specific fraud type</li></ul></div>
+    <div class="table-wrap"><table><thead><tr><th>Fraud Type</th><th>Method</th><th>Red Flags</th><th>Control</th></tr></thead><tbody><tr><td><strong>BEC (Business Email Compromise)</strong></td><td>Fraudster impersonates CEO/CFO via email; instructs finance to wire funds urgently</td><td>Urgency, new beneficiary, bypass of approvals</td><td>Dual authorisation, out-of-band callback, AI email analysis</td></tr><tr><td><strong>Account Takeover</strong></td><td>Credential theft via phishing; fraudster logs in as corporate client</td><td>New device, unusual login location, after-hours access</td><td>MFA, anomaly detection, device fingerprinting</td></tr><tr><td><strong>APP Fraud</strong></td><td>Victim tricked into authorising payment to fraudster posing as trusted party</td><td>New beneficiary added, payment detail change request</td><td>Confirmation of Payee (CoP), client education, delay on new beneficiaries</td></tr><tr><td><strong>Invoice Fraud</strong></td><td>Fake invoice or intercepted real invoice with changed bank details</td><td>Different bank details from usual supplier</td><td>Beneficiary verification, CoP, supplier callback protocol</td></tr><tr><td><strong>Money Muling</strong></td><td>Legitimate accounts used to receive and forward fraud proceeds</td><td>Rapid in-and-out transactions, no business rationale</td><td>Behavioural analytics, transaction pattern monitoring</td></tr></tbody></table></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activity — Bloom's Levels 3 & 5</div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#4ade80;">Apply (Level 3)</div><p>A corporate client calls at 4pm. Their CFO has received an urgent email from their CEO (who is travelling) saying: "Wire $800,000 to this new account immediately — deal closes tonight. Don't tell anyone." The beneficiary is a company name the client has never paid before. How do you handle this call?</p></div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#f87171;">Evaluate (Level 5)</div><p>Evaluate whether real-time payments make fraud worse or better. Consider: (a) speed of detection vs. speed of loss, (b) "No-Deal" / recall mechanisms, (c) the role of Confirmation of Payee. Is real-time a net positive or negative for fraud risk?</p></div>
+    </div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">BEC, APP fraud, account takeover, invoice fraud = most prevalent corporate fraud types</span><span class="summary-point">New beneficiary + urgency = the most common fraud combination</span><span class="summary-point">Real-time payments require real-time fraud detection</span><span class="summary-point">Controls: MFA, dual auth, CoP, behavioural analytics, client education</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m23"><div class="module-header"><div class="module-num-badge">23</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 23 · Compliance & Risk</span><span class="bloom-badge bloom-apply">✅ Apply</span></div><h2>Reconciliation</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">explain</span> what reconciliation is and why it is a daily critical control</li><li>You will be able to <span class="bloom-verb">identify</span> the types of reconciliation breaks and their risk implications</li><li>You will be able to <span class="bloom-verb">apply</span> reconciliation logic to investigate a specific break scenario</li></ul></div>
+    <p>Reconciliation is the comparison of two sets of records to confirm they agree. In payments, a break — a discrepancy between what your systems say and what external parties confirm — is never a minor administrative issue. It may represent a hidden fraud, an operational error, or a liability that is concealed from view.</p>
+    <div class="table-wrap"><table><thead><tr><th>Type</th><th>What Is Compared</th><th>Break Risk</th></tr></thead><tbody><tr><td><strong>Nostro Reconciliation</strong></td><td>Internal FX records vs. correspondent MT940 statement</td><td>Hidden loss, fraud, missing payment</td></tr><tr><td><strong>GL Reconciliation</strong></td><td>Transaction system records vs. accounting general ledger</td><td>Misstatement of P&L or balance sheet</td></tr><tr><td><strong>Position Reconciliation</strong></td><td>Trade positions vs. counterparty confirmations</td><td>Settlement failure, counterparty dispute</td></tr><tr><td><strong>Client Account Reconciliation</strong></td><td>Bank's records vs. client's own statements</td><td>Client dispute, regulatory complaint</td></tr></tbody></table></div>
+    <div class="insight-box"><div class="box-icon">📒</div><div class="box-content"><div class="box-label">Trainer Analogy</div><p>Nostro reconciliation is like matching your bank statement against your personal spending diary. If your statement shows £500 debited on Tuesday and your diary shows only £450 spent, there's a break. In banking, that "extra £50" could be a fee, a fraud, or a system error — and must be explained before the day ends.</p></div></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activity — Bloom's Level 3</div><div class="apply-q"><div class="apply-q-level" style="color:#4ade80;">Apply (Level 3)</div><p>This morning's USD Nostro reconciliation shows three breaks: (a) $1.2M credit with no matching internal record, (b) $50K debit where your system records $45K, (c) a $200K entry from 3 days ago that was never resolved. For each break, state the most likely cause, the immediate action, and who you would escalate to.</p></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">Reconciliation = matching internal records against external confirmations</span><span class="summary-point">A break = discrepancy that must be investigated and resolved same day</span><span class="summary-point">Aged breaks hide losses, fraud, and errors — regulatory risk</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m24"><div class="module-header"><div class="module-num-badge">24</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 24 · Compliance & Risk</span><span class="bloom-badge bloom-apply">✅ Apply</span></div><h2>Payment Investigations</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">identify</span> the common triggers for payment investigations</li><li>You will be able to <span class="bloom-verb">apply</span> investigation tools (MT199, SWIFT gpi, UETR) to trace a specific payment</li><li>You will be able to <span class="bloom-verb">explain</span> how SWIFT gpi changed the investigation landscape</li></ul></div>
+    <h3>Common Investigation Triggers</h3>
+    <ul>
+      <li>"The beneficiary says they haven't received the funds — where is the payment?"</li>
+      <li>"Charges were deducted from the payment amount — why and how much?"</li>
+      <li>"Our payment was supposed to arrive today but hasn't — what is the status?"</li>
+      <li>"We received funds we can't identify — how do we return them?"</li>
+      <li>"Our payment has been held for three days — what is the reason?"</li>
+    </ul>
+    <div class="table-wrap"><table><thead><tr><th>Tool</th><th>When Used</th><th>Key Advantage</th></tr></thead><tbody><tr><td><strong>MT199 / MT299</strong></td><td>Free-format SWIFT message to correspondent bank asking for payment status</td><td>Standard, auditable investigation request</td></tr><tr><td><strong>SWIFT gpi Tracker</strong></td><td>Real-time visibility of payment status across the correspondent chain</td><td>Reduces investigation time from days to minutes</td></tr><tr><td><strong>UETR</strong></td><td>Unique End-to-end Transaction Reference — tracks a single payment through all correspondent banks</td><td>Single reference visible to all parties</td></tr><tr><td><strong>Nostro statement review</strong></td><td>Confirming whether correspondent bank received and applied the funds</td><td>Ground truth check against external records</td></tr></tbody></table></div>
+    <div class="example-box"><div class="box-icon">🔍</div><div class="box-content"><div class="box-label">SWIFT gpi: The Game Changer</div><p>Before gpi, investigating a cross-border payment required sending MT199 messages to each correspondent bank in the chain — each responding in hours or days. With SWIFT gpi, a UETR-tagged payment is visible in real time at every stop in the chain. What took 2-5 days now takes minutes. SWIFT gpi is now mandatory for all cross-border SWIFT payments.</p></div></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activity — Bloom's Level 3</div><div class="apply-q"><div class="apply-q-level" style="color:#4ade80;">Apply (Level 3)</div><p>A client calls — their €500,000 supplier payment was submitted 48 hours ago and the beneficiary claims not to have received it. The client has the UETR. Walk through every step of your investigation process: what tools you use, what each tool tells you, and what you communicate to the client at each stage.</p></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">Investigations triggered by missing funds, charge queries, holds, unidentified receipts</span><span class="summary-point">SWIFT gpi + UETR = real-time tracking across the full correspondent chain</span><span class="summary-point">MT199/MT299 = standard investigation messages between banks</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m25"><div class="module-header"><div class="module-num-badge">25</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 25 · Strategy</span><span class="bloom-badge bloom-evaluate">🔴 Evaluate</span></div><h2>Payments Modernisation</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">describe</span> the four major forces transforming the payments industry</li><li>You will be able to <span class="bloom-verb">evaluate</span> the strategic implications of each force for a wholesale bank</li><li>You will be able to <span class="bloom-verb">assess</span> the risk of inaction on modernisation</li></ul></div>
+    <div class="compare-grid">
+      <div class="compare-card"><h4>⚡ Real-Time Payments</h4><p>24/7/365 instant rails now adopted globally: UPI (India), PayNow (Singapore), PIX (Brazil), Faster Payments (UK), FedNow (US).</p><p><em>Corporate impact:</em> on-demand payroll, instant supplier payments, emergency disbursements outside banking hours.</p></div>
+      <div class="compare-card"><h4>🔌 API Banking &amp; Open Banking</h4><p>Corporates expect system-to-system connectivity. PSD2 (EU), UK Open Banking mandate banks to expose standardised APIs. Third parties can initiate payments on behalf of clients.</p><p><em>Corporate impact:</em> ERP-to-bank direct integration without portal login or file upload.</p></div>
+      <div class="compare-card"><h4>☁️ Cloud-Native Infrastructure</h4><p>Legacy payment platforms (20–30 years old) being replaced with elastic cloud architectures. Scale for peak volumes without infrastructure investment; deploy new features in weeks, not quarters.</p></div>
+      <div class="compare-card"><h4>🤖 AI &amp; ML in Payments</h4><p>Transforming: fraud detection (lower false positives), anomaly detection, intelligent routing optimisation, predictive liquidity forecasting, automated exception resolution.</p></div>
+    </div>
+    <div class="warning-box"><div class="box-icon">⚠️</div><div class="box-content"><div class="box-label">The Cost of Inaction</div><p>Fintechs like Wise, Airwallex, and Currencycloud are offering corporates faster, cheaper, more transparent payments than many incumbent banks. Banks that delay modernisation risk losing payment mandates — the anchor relationship — to these competitors. Once lost, payment mandates are very difficult to regain.</p></div></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activities — Bloom's Levels 5 & 6</div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#f87171;">Evaluate (Level 5)</div><p>A large corporate client tells you they are considering moving their payroll processing to a fintech that offers real-time, API-driven payroll. Evaluate the threat and draft a retention strategy that positions your bank's modernised payment capabilities as superior.</p></div>
+      <div class="apply-q"><div class="apply-q-level" style="color:#c084fc;">Create (Level 6)</div><p>Design a 12-month payments modernisation roadmap for a mid-sized wholesale bank. Prioritise initiatives by impact and feasibility. Include ISO 20022, real-time rail adoption, API connectivity, and one AI use case. Explain your prioritisation logic.</p></div>
+    </div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">Four forces: real-time payments, API banking, cloud, AI/ML</span><span class="summary-point">ISO 20022 = the data foundation enabling all modernisation</span><span class="summary-point">Fintechs are capturing payment mandates from slow-moving banks</span><span class="summary-point">Modernisation is a strategic imperative — not optional</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m26"><div class="module-header"><div class="module-num-badge">26</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 26 · Strategy</span><span class="bloom-badge bloom-analyze">🔶 Analyse</span></div><h2>Case Study: $5M Cross-Border Payment</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">trace</span> a $5M cross-border payment through every lifecycle stage</li><li>You will be able to <span class="bloom-verb">identify</span> where failures could occur and their commercial consequences</li><li>You will be able to <span class="bloom-verb">analyse</span> the interdependency of all 29 modules in a single real transaction</li></ul></div>
+    <p><strong>Scenario:</strong> An Indian manufacturing corporate sends USD 5,000,000 to a German supplier. Payment due today. The supplier will release goods to another buyer if payment is not received by Frankfurt close.</p>
+    <div class="lifecycle">
+      <div class="lifecycle-step"><div class="lifecycle-dot">1</div><div class="lifecycle-content"><h4>Initiation (Module 8)</h4><p>Corporate submits via portal before 2pm cut-off. MT101 or pain.001 message captures full instruction including IBAN, BIC DEUTDEDB, beneficiary name, purpose code.</p></div></div>
+      <div class="lifecycle-step"><div class="lifecycle-dot">2</div><div class="lifecycle-content"><h4>Validation (Module 8)</h4><p>IBAN format ✓, BIC valid ✓, authorised signatory ✓, balance $5.2M ✓, no duplicate ✓. Passes validation in under 30 seconds.</p></div></div>
+      <div class="lifecycle-step"><div class="lifecycle-dot">3</div><div class="lifecycle-content"><h4>FX Booking (Module 5, 19)</h4><p>Account in INR. FX desk books USD/INR rate. INR equivalent debited; $5M USD sourced. Rate locked — time-sensitive given cut-off proximity.</p></div></div>
+      <div class="lifecycle-step"><div class="lifecycle-dot">4</div><div class="lifecycle-content"><h4>Sanctions Screening (Module 20, 21)</h4><p>All parties screened: Indian corporate ✓, Schmidt Industries GmbH ✓, Deutsche Bank ✓. No sanctioned jurisdictions. Released in seconds. If a near-match had triggered, the payment would have been held for manual review — likely missing cut-off.</p></div></div>
+      <div class="lifecycle-step"><div class="lifecycle-dot">5</div><div class="lifecycle-content"><h4>Routing (Modules 6, 15)</h4><p>Payment hub routes via JPMorgan Chase (US correspondent). Sends MT103 to JPMorgan with full beneficiary details. Sends MT202 COV authorising JPMorgan to debit Indian Bank's USD Nostro.</p></div></div>
+      <div class="lifecycle-step"><div class="lifecycle-dot">6</div><div class="lifecycle-content"><h4>Settlement (Modules 12, 18)</h4><p>JPMorgan debits Indian Bank's USD Nostro. Credits Deutsche Bank via Fedwire. Deutsche Bank credits Schmidt Industries GmbH account. SWIFT gpi tracker updated at each step. Full settlement in under 90 minutes.</p></div></div>
+      <div class="lifecycle-step"><div class="lifecycle-dot">7</div><div class="lifecycle-content"><h4>Reconciliation (Modules 12, 23)</h4><p>Indian Bank receives MT940 from JPMorgan confirming $5M Nostro debit. Internal systems match entry. GL updated. Client notified via portal. Reconciliation complete by end of day.</p></div></div>
+    </div>
+    <div class="warning-box"><div class="box-icon">⚠️</div><div class="box-content"><div class="box-label">What Could Have Gone Wrong — Module Cross-Reference</div><p>Wrong IBAN (Module 8 Validation) → exception queue → investigation → missed cut-off. Sanctions hit on Schmidt GmbH (Module 21) → manual review → missed Frankfurt close. Nostro balance insufficient (Module 19) → settlement failure. FX rate booked but cut-off missed (Module 11) → overnight rate loss.</p></div></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activity — Bloom's Level 6 (Synthesis)</div><div class="apply-q"><div class="apply-q-level" style="color:#c084fc;">Create (Level 6)</div><p>Using this case study as a template, build your own end-to-end case study for a payment scenario from your own clients' world. Include all seven lifecycle stages, identify three potential failure points, and explain how each would be resolved. Present it as a training scenario for a new colleague.</p></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">A single cross-border payment touches: validation, FX, screening, routing, settlement, reconciliation</span><span class="summary-point">Every stage references a different domain of knowledge</span><span class="summary-point">SWIFT gpi provides end-to-end transparency throughout</span><span class="summary-point">Commercial consequences of failure can be immediate and severe</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m27"><div class="module-header"><div class="module-num-badge">27</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 27 · Strategy</span><span class="bloom-badge bloom-evaluate">🔴 Evaluate</span></div><h2>Executive Summary: Pillars of Payments Excellence</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">recall</span> the seven pillars of payments excellence</li><li>You will be able to <span class="bloom-verb">evaluate</span> the consequence of failure in each pillar</li><li>You will be able to <span class="bloom-verb">recommend</span> which pillar to prioritise given a specific operational challenge</li></ul></div>
+    <div class="table-wrap"><table><thead><tr><th>#</th><th>Pillar</th><th>Why It Matters</th><th>If It Fails</th></tr></thead><tbody><tr><td><strong>1</strong></td><td>Clean Data</td><td>Drives STP, reduces exceptions, enables ISO 20022</td><td>Manual processing, errors, failed screening</td></tr><tr><td><strong>2</strong></td><td>Efficient Routing</td><td>Minimises cost, time, and risk per payment</td><td>Slow/expensive payments, missed cut-offs</td></tr><tr><td><strong>3</strong></td><td>Strong Controls</td><td>Protects bank and client from compliance and fraud risk</td><td>Regulatory fines, criminal liability, reputational damage</td></tr><tr><td><strong>4</strong></td><td>Available Liquidity</td><td>Ensures all payments settle on time</td><td>Settlement failures, counterparty defaults</td></tr><tr><td><strong>5</strong></td><td>Reliable Technology</td><td>Resilient systems process payments 24/7</td><td>Downtime, reputational damage, client attrition</td></tr><tr><td><strong>6</strong></td><td>Fast Resolution</td><td>Exceptions and investigations resolved quickly</td><td>Aged items, client loss, operational losses</td></tr><tr><td><strong>7</strong></td><td>Continuous Modernisation</td><td>Keeps the bank competitive against fintechs and new entrants</td><td>Loss of payment mandates to modern competitors</td></tr></tbody></table></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activity — Bloom's Level 5</div><div class="apply-q"><div class="apply-q-level" style="color:#f87171;">Evaluate (Level 5)</div><p>Your bank scores itself as: Data=3/5, Routing=4/5, Controls=5/5, Liquidity=3/5, Technology=2/5, Resolution=4/5, Modernisation=1/5. Which pillar should be prioritised for investment first? Justify your answer considering interdependencies between pillars and the risk of inaction in each area.</p></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">Seven pillars: data, routing, controls, liquidity, technology, resolution, modernisation</span><span class="summary-point">All seven are interdependent — weakness in one weakens others</span><span class="summary-point">Use the framework to assess, prioritise, and communicate payments strategy</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m28"><div class="module-header"><div class="module-num-badge">28</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 28 · Strategy</span><span class="bloom-badge bloom-apply">✅ Apply</span></div><h2>Trainer Analogies Reference</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">use</span> each analogy correctly when explaining a payment concept to a non-specialist</li><li>You will be able to <span class="bloom-verb">create</span> your own analogy for a payment concept you find difficult to explain</li></ul></div>
+    <div class="table-wrap"><table><thead><tr><th>Concept</th><th>Analogy</th><th>What It Illustrates</th><th>Bloom's Level</th></tr></thead><tbody><tr><td><strong>Payment Lifecycle</strong></td><td>Courier delivery — book, verify, route, transport, deliver, confirm</td><td>Each step is discrete; any step can fail; gpi = parcel tracking number</td><td>Understand</td></tr><tr><td><strong>STP</strong></td><td>Airport e-gate — seamless when data matches; manual desk when it doesn't</td><td>Automation depends entirely on data quality</td><td>Understand</td></tr><tr><td><strong>ISO 20022 vs MT</strong></td><td>MT = a fax; ISO 20022 = a fully tagged digital document</td><td>ISO 20022 carries far more useful, structured information</td><td>Understand</td></tr><tr><td><strong>Nostro/Vostro</strong></td><td>Your foreign bank account — Nostro to you, a deposit to the foreign bank</td><td>Perspective-dependent naming; same account, two views</td><td>Remember</td></tr><tr><td><strong>Reconciliation</strong></td><td>Matching bank passbook with personal spending diary</td><td>Every entry must agree; breaks reveal missing transactions</td><td>Understand</td></tr><tr><td><strong>Correspondent Banking</strong></td><td>Postal relay stations — your letter passes through multiple sorting offices</td><td>Each intermediary adds time and potentially cost</td><td>Understand</td></tr><tr><td><strong>Cut-off Times</strong></td><td>Last train — miss it and you wait until tomorrow regardless of urgency</td><td>Deadlines are fixed; no exceptions; plan around them</td><td>Apply</td></tr><tr><td><strong>RTGS vs DNS</strong></td><td>RTGS = paying for every coffee individually; DNS = settling bar tab at close</td><td>RTGS = immediate finality; DNS = end-of-cycle netting</td><td>Analyse</td></tr></tbody></table></div>
+    <div class="apply-activity"><div class="apply-activity-header">🎯 Application Activity — Bloom's Level 6</div><div class="apply-q"><div class="apply-q-level" style="color:#c084fc;">Create (Level 6)</div><p>Pick one concept from this handbook that you find most difficult to explain to a client. Create your own original analogy for it. Test it on a colleague. Refine it based on their feedback. Submit it to your trainer as a contribution to the handbook.</p></div></div>
+    <div class="module-summary"><div class="summary-label">Module Summary</div><div class="summary-points"><span class="summary-point">Analogies are memory anchors — they make abstract concepts sticky</span><span class="summary-point">Use them in client conversations to build shared understanding</span><span class="summary-point">The best professionals can explain complex concepts simply</span></div></div>
+  </div>
+</div>
+
+<div class="module" id="m29"><div class="module-header"><div class="module-num-badge">29</div><div class="module-title-group"><div class="module-tag-row"><span class="module-tag">Module 29 · Assessment</span><span class="bloom-badge bloom-evaluate">🔴 Evaluate</span></div><h2>Interview &amp; Class Questions — All Six Bloom's Levels</h2></div></div>
+  <div class="module-body">
+    <div class="learning-objectives"><div class="lo-label">Learning Objectives</div><ul class="lo-list"><li>You will be able to <span class="bloom-verb">assess</span> your own depth of knowledge across all modules</li><li>You will be able to <span class="bloom-verb">demonstrate</span> knowledge from all six Bloom's taxonomy levels</li><li>You will be able to <span class="bloom-verb">prepare</span> for interview and examination scenarios at all complexity levels</li></ul></div>
+    <h3>Level 1 — Remember: Foundational Knowledge</h3>
+    <div class="quiz-q"><div class="quiz-q-label">Q01 · Remember</div><p>Name the six participants in a cross-border payment chain in order.</p></div>
+    <div class="quiz-q"><div class="quiz-q-label">Q02 · Remember</div><p>What does SWIFT stand for? Is it a payment rail? What does it actually do?</p></div>
+    <div class="quiz-q"><div class="quiz-q-label">Q03 · Remember</div><p>List four common causes of STP failure.</p></div>
+    <h3>Level 2 — Understand: Conceptual Grasp</h3>
+    <div class="quiz-q"><div class="quiz-q-label">Q04 · Understand</div><p>In your own words, explain the difference between clearing and settlement. Why does the distinction matter operationally?</p></div>
+    <div class="quiz-q"><div class="quiz-q-label">Q05 · Understand</div><p>Explain Nostro and Vostro to someone who has never worked in banking, using a non-banking analogy of your own creation.</p></div>
+    <div class="quiz-q"><div class="quiz-q-label">Q06 · Understand</div><p>Why is ISO 20022 considered an upgrade from MT messaging? Explain using a non-technical comparison.</p></div>
+    <h3>Level 3 — Apply: Practical Scenarios</h3>
+    <div class="quiz-q"><div class="quiz-q-label">Q07 · Apply</div><p>A client submits a €1M payment at 4pm. Your EUR cut-off is 3pm. The beneficiary needs funds today. Walk through exactly what happens and what you tell the client.</p></div>
+    <div class="quiz-q"><div class="quiz-q-label">Q08 · Apply</div><p>Your screening tool flags a payment as a potential sanctions match. Walk through the steps you take from alert to resolution.</p></div>
+    <div class="quiz-q"><div class="quiz-q-label">Q09 · Apply</div><p>Recommend the appropriate payment method for each: (a) 20,000 employee salaries, (b) $50M securities settlement, (c) emergency $100K transfer at 11pm on a Friday.</p></div>
+    <h3>Level 4 — Analyse: Breaking Things Down</h3>
+    <div class="quiz-q"><div class="quiz-q-label">Q10 · Analyse</div><p>Your bank's STP rate fell from 92% to 83% in a month. Identify five possible root causes and describe the data you would need to confirm or rule out each one.</p></div>
+    <div class="quiz-q"><div class="quiz-q-label">Q11 · Analyse</div><p>Analyse why correspondent banking "de-risking" creates a financial inclusion problem globally. Who is most affected and why?</p></div>
+    <div class="quiz-q"><div class="quiz-q-label">Q12 · Analyse</div><p>Compare RTGS and DNS on five dimensions. For each dimension, explain which model is superior and under what conditions that advantage disappears.</p></div>
+    <h3>Level 5 — Evaluate: Making Judgements</h3>
+    <div class="quiz-q"><div class="quiz-q-label">Q13 · Evaluate</div><p>Evaluate this claim: "Real-time payments are always better for corporate clients than wire transfers." Justify your position with at least three counter-arguments.</p></div>
+    <div class="quiz-q"><div class="quiz-q-label">Q14 · Evaluate</div><p>Your bank's executive team says: "ISO 20022 is just an IT project — it doesn't affect business." Build a board-level business case in five minutes that proves them wrong.</p></div>
+    <div class="quiz-q"><div class="quiz-q-label">Q15 · Evaluate</div><p>A fintech competitor claims they can settle cross-border payments in seconds for a fraction of your bank's fees. Evaluate the claim. What is real, what is marketing, and how should your bank respond?</p></div>
+    <h3>Level 6 — Create: Synthesis</h3>
+    <div class="quiz-q"><div class="quiz-q-label">Q16 · Create</div><p>Design a 90-day onboarding programme for a new Payments Relationship Manager joining your team. Use the ADDIE framework. Include formal learning, mentoring, and on-the-job assignments. Define success metrics using Kirkpatrick Level 2 and 3.</p></div>
+    <div class="quiz-q"><div class="quiz-q-label">Q17 · Create</div><p>Design a payment solution for a corporate that has subsidiaries in India, Germany, the US, and Singapore, all needing to pay suppliers locally and transfer surplus cash to a central treasury. Include: recommended payment methods, rails, liquidity structure, and compliance considerations.</p></div>
+    <div class="quiz-q"><div class="quiz-q-label">Q18 · Create</div><p>Build a one-page "Payments Health Scorecard" your bank could use quarterly to assess its payments business against the seven pillars of excellence. Define metrics, rating scales, and escalation thresholds for each pillar.</p></div>
+    <div class="remember-box"><div class="box-icon">✅</div><div class="box-content"><div class="box-label">Assessment Guidance</div><p>Use the STAR method for applied questions (Situation, Task, Action, Result). For Levels 1–2, speed and accuracy matter. For Levels 3–4, show your reasoning process. For Levels 5–6, demonstrate that you can hold competing ideas simultaneously and make a reasoned, defensible recommendation.</p></div></div>
+  </div>
+</div>
+
+<!-- GLOSSARY -->
+<hr class="section-divider" />
+<div id="glossary" class="module">
+  <div class="module-header">
+    <div class="module-num-badge" style="background: linear-gradient(135deg, #1e3a5f, #0d1f3c); color: var(--gold-light); font-size: 20px;">📖</div>
+    <div class="module-title-group"><div class="module-tag">Reference</div><h2>Complete Glossary of Payment Terms</h2></div>
+  </div>
+  <div class="glossary-grid">
+    <div class="gloss-item"><div class="gloss-term">ACH (Automated Clearing House)</div><div class="gloss-def">US batch electronic payment system for direct debits, payroll, and recurring payments. Processes in scheduled batches at very low cost.</div></div>
+    <div class="gloss-item"><div class="gloss-term">ADDIE</div><div class="gloss-def">Analysis, Design, Development, Implementation, Evaluation — the gold standard instructional design model used by elite corporate training programmes.</div></div>
+    <div class="gloss-item"><div class="gloss-term">AML (Anti-Money Laundering)</div><div class="gloss-def">Framework of laws, regulations, and procedures to detect and prevent laundering of criminal proceeds through the financial system.</div></div>
+    <div class="gloss-item"><div class="gloss-term">APP Fraud (Authorised Push Payment)</div><div class="gloss-def">Fraud where the victim is tricked into authorising a payment to a fraudster's account, often posing as a trusted party such as a supplier or bank.</div></div>
+    <div class="gloss-item"><div class="gloss-term">BEC (Business Email Compromise)</div><div class="gloss-def">Fraud where a criminal impersonates a CEO or CFO by email to instruct an employee to make an urgent, unauthorised wire transfer.</div></div>
+    <div class="gloss-item"><div class="gloss-term">BIC (Bank Identifier Code)</div><div class="gloss-def">SWIFT code — unique 8 or 11-character identifier for a specific bank globally. Required in all cross-border payment messages to route correctly.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Bloom's Taxonomy</div><div class="gloss-def">A hierarchical model of cognitive learning levels: Remember, Understand, Apply, Analyse, Evaluate, Create. Used to design and assess learning depth.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Break (Reconciliation Break)</div><div class="gloss-def">A discrepancy between two sets of records that cannot be automatically matched. Must be investigated and resolved promptly.</div></div>
+    <div class="gloss-item"><div class="gloss-term">CHIPS</div><div class="gloss-def">Clearing House Interbank Payments System. Private US large-value clearing using multilateral netting. Processes ~95% of all international USD payments.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Clearing</div><div class="gloss-def">Banks communicate and agree on payment obligations. Entitlements calculated. No money moves at this stage — clearing is the agreement to settle.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Correspondent Bank</div><div class="gloss-def">A bank that provides payment services on behalf of another bank, typically in a foreign country or currency. The backbone of cross-border payment routing.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Cut-off Time</div><div class="gloss-def">The deadline by which payment instructions must be received to be processed in a given business cycle. Exists at client, internal, clearing house, and central bank levels.</div></div>
+    <div class="gloss-item"><div class="gloss-term">De-Risking</div><div class="gloss-def">When banks terminate correspondent relationships in high-risk jurisdictions to reduce AML/sanctions exposure. Creates financial isolation and access problems for affected countries.</div></div>
+    <div class="gloss-item"><div class="gloss-term">DNS (Deferred Net Settlement)</div><div class="gloss-def">Payment obligations accumulated during the day, then netted and only net positions settled at end of cycle. Lower liquidity requirement than RTGS.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Exception</div><div class="gloss-def">A payment that cannot be processed automatically and requires manual intervention. Caused by data issues, sanctions hits, insufficient funds, or system errors.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Fedwire</div><div class="gloss-def">Federal Reserve RTGS system for USD. All Fedwire payments are final and irrevocable upon settlement. Handles large-value, time-critical USD payments.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Gagné's Nine Events</div><div class="gloss-def">Evidence-based instructional sequence: gain attention, inform objectives, stimulate recall, present content, provide guidance, elicit performance, give feedback, assess, enhance retention.</div></div>
+    <div class="gloss-item"><div class="gloss-term">gpi (Global Payment Innovation)</div><div class="gloss-def">SWIFT initiative providing speed, transparency, and real-time end-to-end tracking for cross-border payments via UETR. Now mandatory on SWIFT.</div></div>
+    <div class="gloss-item"><div class="gloss-term">IBAN (International Bank Account Number)</div><div class="gloss-def">Standardised format for identifying bank accounts internationally. Contains country code, check digits, and account identifier.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Intraday Liquidity</div><div class="gloss-def">Funds available within the business day to meet payment settlement obligations as they fall due. Critical in RTGS environments; regulated under BCBS 248.</div></div>
+    <div class="gloss-item"><div class="gloss-term">ISO 20022</div><div class="gloss-def">International XML-based financial messaging standard replacing legacy SWIFT MT messages. Carries richer, structured payment data enabling higher automation and better controls.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Kirkpatrick Model</div><div class="gloss-def">Four-level training evaluation model: Reaction, Learning, Behaviour, Results. Used to measure whether training is working beyond just completion rates.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Kolb's Learning Cycle</div><div class="gloss-def">Four-stage experiential learning model: Concrete Experience → Reflective Observation → Abstract Conceptualisation → Active Experimentation.</div></div>
+    <div class="gloss-item"><div class="gloss-term">KYC (Know Your Customer)</div><div class="gloss-def">Mandatory process of verifying customer identity, understanding business activities, and assessing risk profile before and during a banking relationship.</div></div>
+    <div class="gloss-item"><div class="gloss-term">LEI (Legal Entity Identifier)</div><div class="gloss-def">20-character alphanumeric code uniquely identifying a legal entity in financial transactions. Prominently used in ISO 20022 messages for transparency.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Letter of Credit (LC)</div><div class="gloss-def">Trade finance instrument where a bank guarantees payment to an exporter when specified shipping and trade documents are presented in compliance with agreed terms.</div></div>
+    <div class="gloss-item"><div class="gloss-term">MT103</div><div class="gloss-def">Primary SWIFT customer payment message. Carries a single customer credit transfer instruction. Being replaced by ISO 20022 pacs.008.</div></div>
+    <div class="gloss-item"><div class="gloss-term">MT202 COV</div><div class="gloss-def">SWIFT bank-to-bank cover payment with full underlying customer details. Post-FATF mandatory transparency requirement for cover payments.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Nostro Account</div><div class="gloss-def">"Our account held at another bank." Foreign currency account maintained by Bank A at Bank B for cross-border settlement. Requires daily reconciliation.</div></div>
+    <div class="gloss-item"><div class="gloss-term">OFAC</div><div class="gloss-def">Office of Foreign Assets Control — US Treasury sanctions body. All USD transactions globally are subject to OFAC compliance regardless of where processed.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Payment Hub</div><div class="gloss-def">Centralised technology platform managing end-to-end processing of all payment types across channels, rails, and currencies under consistent logic.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Payment Rail</div><div class="gloss-def">The underlying network infrastructure over which payment instructions and/or funds travel. Selection based on currency, geography, urgency, and value.</div></div>
+    <div class="gloss-item"><div class="gloss-term">PEP (Politically Exposed Person)</div><div class="gloss-def">Individual in a prominent public function posing higher bribery/corruption risk. Requires enhanced due diligence under AML regulations.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Reconciliation</div><div class="gloss-def">Comparing two record sets to confirm they agree. Breaks must be investigated. In payments, applies to Nostro accounts, GL, positions, and client accounts.</div></div>
+    <div class="gloss-item"><div class="gloss-term">RTGS (Real-Time Gross Settlement)</div><div class="gloss-def">Settlement system where each payment settled individually and continuously in real time. Final and irrevocable. High liquidity requirement but minimal settlement risk.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Sanctions Screening</div><div class="gloss-def">Automated process checking all payment parties against government and international sanctions watchlists. Mandatory control for all transactions.</div></div>
+    <div class="gloss-item"><div class="gloss-term">SEPA</div><div class="gloss-def">Single Euro Payments Area — harmonised EUR payment rules across 36 European countries. SEPA Credit Transfer and Direct Debit are key schemes.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Settlement</div><div class="gloss-def">Final, irrevocable transfer of funds between banks through central bank accounts. Discharges the obligation agreed at clearing.</div></div>
+    <div class="gloss-item"><div class="gloss-term">STP (Straight Through Processing)</div><div class="gloss-def">Fully automated payment processing from initiation to settlement with zero manual intervention. High STP rate = lower cost, faster speed, better client experience.</div></div>
+    <div class="gloss-item"><div class="gloss-term">SWIFT</div><div class="gloss-def">Society for Worldwide Interbank Financial Telecommunication. Global cooperative providing secure financial messaging to 11,000+ institutions. SWIFT carries instructions, not money.</div></div>
+    <div class="gloss-item"><div class="gloss-term">TARGET2</div><div class="gloss-def">Eurosystem RTGS for large-value EUR payments. Processes €2T+ per day. Being upgraded as part of the Eurosystem's T2 modernisation programme.</div></div>
+    <div class="gloss-item"><div class="gloss-term">UETR (Unique End-to-end Transaction Reference)</div><div class="gloss-def">Unique identifier assigned to every SWIFT gpi payment enabling real-time end-to-end tracking across all correspondent banks in the chain.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Vostro Account</div><div class="gloss-def">"Your account held with us." The same account as a Nostro from the owning bank's perspective — viewed from the holding correspondent bank's side.</div></div>
+    <div class="gloss-item"><div class="gloss-term">70:20:10 Model</div><div class="gloss-def">Learning model asserting that 70% of professional development comes from on-the-job experience, 20% from coaching and social learning, and 10% from formal training.</div></div>
+  </div>
+</div>
+
+<!-- FINAL CTA -->
+<div id="final-cta">
+  <h2>Ask Jacey</h2>
+  <p>Payments Domain Training · Wholesale Banking & Payments</p>
+  <p style="font-size:13px;margin-top:4px;">Built on ADDIE · Bloom's Taxonomy · Kirkpatrick · Kolb · 70:20:10</p>
+  <p style="font-size:13px;">For training sessions, bespoke coaching, and team workshops</p>
+  <a href="mailto:askjaceynow@gmail.com">askjaceynow@gmail.com</a>
+</div>
+
+</div>
+</main>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const total = document.body.scrollHeight - window.innerHeight;
+    document.getElementById('progress-bar').style.width = (window.scrollY / total * 100) + '%';
+  });
+  const sections = document.querySelectorAll('.module, .framework-section, #glossary');
+  const navItems = document.querySelectorAll('.nav-item');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        navItems.forEach(n => n.classList.toggle('active', n.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { rootMargin: '-15% 0px -75% 0px' });
+  sections.forEach(s => observer.observe(s));
+  function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+  navItems.forEach(n => n.addEventListener('click', () => document.getElementById('sidebar').classList.remove('open')));
+</script>
+</body>
+</html>
